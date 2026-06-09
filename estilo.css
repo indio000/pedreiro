@@ -1,244 +1,251 @@
 /* ==========================================================================
-   PALETA DE CORES OFICIAL - COLÉGIO ESTADUAL SÃO CRISTÓVÃO
+   Guimara Construção - Style.css Moderno, Responsivo e Profissional
    ========================================================================== */
-:root {
-    --primary-blue: #132960;   /* Azul escuro do escudo e estruturas */
-    --accent-red: #D31C24;     /* Vermelho vivo dos detalhes e textos */
-    --bg-white: #FFFFFF;       /* Branco puro para blocos e destaques */
-    --bg-light: #F0F3F8;       /* Cinza azulado bem claro para o fundo do site */
-    --text-dark: #1C1C1C;      /* Cinza quase preto para melhor leitura */
-    --text-muted: #555555;     /* Cinza médio para textos secundários */
-}
 
-/* ==========================================================================
-   ESTRUTURA GERAL DA PÁGINA
-   ========================================================================== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+* {
     margin: 0;
-    background-color: var(--bg-light);
-    color: var(--text-dark);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-/* O container principal estica para empurrar o rodapé para baixo */
-.container {
-    padding: 2rem 1rem;
-    max-width: 900px;
-    margin: 0 auto;
-    flex: 1;
-  }
-
-/* ==========================================================================
-   MENU DE NAVEGAÇÃO (NAV) - Estilo Azul Escuro com Hover Vermelho
-   ========================================================================== */
-nav {
-    background-color: var(--primary-blue);
-    padding: 1.1rem;
-    display: flex;
-    justify-content: space-around;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    border-bottom: 4px solid var(--accent-red); /* Faixa vermelha de destaque */
-}
-
-nav a {
-    color: var(--bg-white);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.05rem;
-    padding: 5px 12px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-nav a:hover {
-    background-color: var(--accent-red);
-    color: var(--bg-white);
-}
-/* ==========================================================================
-   HEADER / BANNER PRINCIPAL (Inspirado fielmente no design da placa)
-   ========================================================================== */
-.banner {
-    /* Base branca com as curvas geométricas vermelha e azul nas extremidades */
-    background: 
-        linear-gradient(115deg, var(--primary-blue) 12%, transparent 12.5%),
-        linear-gradient(295deg, var(--accent-red) 12%, transparent 12.5%),
-        linear-gradient(115deg, var(--accent-red) 14%, transparent 14.5%),
-        linear-gradient(295deg, var(--primary-blue) 14%, transparent 14.5%),
-        var(--bg-white);
-    
-    color: var(--primary-blue);
-    padding: 40px 20px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-    margin-bottom: 15px;
-    border-bottom: 1px solid #DDD;
-}
-
-.banner h1 {
-    margin: 0;
-    font-size: 2.8rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--primary-blue);
-}
-.banner p {
-    margin: 8px 0;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--accent-red); /* O subtítulo imita a linha vermelha inferior da placa */
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.banner img {
-    margin-top: 15px;
-    max-width: 100%;
-    height: auto;
-    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
-}
-
-/* ==========================================================================
-   CARDS DE CONTEÚDO
-   ========================================================================== */
-.card {
-    background: var(--bg-white);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border-left: 6px solid var(--primary-blue); /* Detalhe azul na lateral esquerda */
-    margin-bottom: 25px;
-}
-.card h1, .card h2, .card h3 {
-    color: var(--primary-blue);
-    margin-top: 0;
-}
-
-.card p {
-    line-height: 1.6;
-    color: var(--text-dark);
-}
-
-hr {
-    border: 0;
-    height: 1px;
-    background: #E0E0E0;
-    margin: 1.5rem 0;
-}
-
-/* ==========================================================================
-   FORMULÁRIOS E INPUTS
-   ========================================================================== */
-input, select, button {
-    width: 100%;
-    padding: 0.85rem;
-    margin: 0.6rem 0;
-    border: 2px solid #CBD5E1;
-    border-radius: 6px;
+    padding: 0;
     box-sizing: border-box;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-  }
-
-input:focus, select:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(19, 41, 96, 0.15);
 }
 
-/* Botão Principal em Vermelho Destaque (Estilo Escolar) */
-button, button[type="submit"] {
-    background-color: var(--accent-red);
-    color: var(--bg-white);
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 3px 6px rgba(211, 28, 36, 0.2);
+:root {
+    --primary: #E65100;
+    --primary-hover: #BF4300;
+    --dark: #1a1a1a;
+    --light: #f8f9fa;
+    --gray: #555;
+    --white: #ffffff;
+    --transition: all 0.3s ease-in-out;
+    --radius: 12px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-button:hover {
-    background-color: #A81319; /* Vermelho um pouco mais escuro para o hover */
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(211, 28, 36, 0.3);
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+    color: var(--gray);
+    background-color: var(--white);
+    padding-top: 80px;
 }
 
-/* ==========================================================================
-   TABELAS DE DADOS
-   ========================================================================== */
-table {
+.container {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 1.2rem;
-    background-color: var(--bg-white);
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
 
-th, td {
-    padding: 12px 15px;
-    text-align: left;
-}
+a { text-decoration: none; color: inherit; transition: var(--transition); }
+img { max-width: 100%; display: block; border-radius: 8px; }
 
-thead tr {
-    background-color: var(--primary-blue);
-    color: var(--bg-white);
-}
-
-th {
+/* Botões */
+.btn {
+    display: inline-block;
+    padding: 14px 32px;
     font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-}
-
-tbody tr {
-    border-bottom: 1px solid #E2E8F0;
-    transition: background-color 0.2s ease;
-}
-/* Efeito zebra suave nas linhas da tabela */
-tbody tr:nth-of-type(even) {
-    background-color: #F8FAFC;
-}
-
-tbody tr:hover {
-    background-color: #EDF2F7;
-}
-
-/* Botão de ação menor dentro das tabelas */
-td button {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    width: auto;
-    margin: 0;
-    background-color: var(--primary-blue);
-}
-
-td button:hover {
-    background-color: #0A1738;
-}
-
-/* ==========================================================================
-   RODAPÉ (FOOTER) - Estilo Dark Técnico
-   ========================================================================== */
-.rodape {
-    background-color: #1A1A1A; /* Fundo cinza escuro grafite */
-    color: #AEB0B5;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.05rem;
     text-align: center;
-  padding: 25px 0;
-    margin-top: 40px;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    border: 2px solid var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-3px);
+}
+
+.btn-outline {
+    border: 2px solid var(--white);
+    color: var(--white);
+}
+
+.btn-outline:hover {
+    background-color: var(--white);
+    color: var(--dark);
+}
+
+/* Títulos */
+.section-title {
+    font-size: 2.8rem;
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 50px;
+    font-weight: 700;
+}
+
+/* Header */
+header {
+    background: var(--dark);
+    color: var(--white);
+    position: fixed;
     width: 100%;
-    border-top: 4px solid var(--primary-blue); /* Linha azul de fechamento */
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    height: 80px;
+    display: flex;
+    align-items: center;
 }
 
-.container-rodape p {
-    margin: 6px 0;
-    font-size: 0.9rem;
+header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
-.container-rodape p:first-child {
-    color: var(--bg-white);
-    font-weight: bold;
+.logo h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.logo span { color: var(--primary); }
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 32px;
+}
+
+nav ul a {
+    font-weight: 500;
+    position: relative;
+    padding: 8px 0;
+}
+
+nav ul a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary);
+    transition: var(--transition);
+}
+
+nav ul a:hover::after { width: 100%; }
+
+/* Hero */
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('fundo2.png') center/cover no-repeat;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 3.8rem;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.4rem;
+    max-width: 700px;
+    margin: 0 auto 40px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Seções */
+.sobre-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.agendar-section {
+    background: linear-gradient(135deg, #1a1a1a, #E65100);
+    color: white;
+    padding: 100px 0;
+}
+
+.agendar-form {
+    max-width: 700px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.1);
+    padding: 50px;
+    border-radius: var(--radius);
+    backdrop-filter: blur(10px);
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Cards */
+.grid, .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.card, .service-card {
+    background: white;
+    padding: 35px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.card:hover, .service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* Footer */
+footer {
+    background: var(--dark);
+    color: white;
+    text-align: center;
+    padding: 40px 0;
+    margin-top: 80px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.8rem; }
+    .section-title { font-size: 2.2rem; }
+    nav ul { gap: 15px; font-size: 0.95rem; }
+    .sobre-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-buttons { flex-direction: column; align-items: center; }
 }
