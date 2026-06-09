@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <!-- Header igual em todos os arquivos -->
     <header>
         <div class="container">
             <div class="logo">
@@ -42,5 +41,74 @@
         </div>
     </section>
 
-    <!-- Restante do conteúdo igual ao que eu enviei anteriormente... -->
-    <!-- (Para economizar espaço, use o index.html que enviei na mensagem anterior) -->
+    <section class="sobre">
+        <div class="container">
+            <h2 class="section-title">Sobre Nós</h2>
+            <div class="sobre-grid">
+                <div class="sobre-text">
+                    <p>Com mais de 10 anos de experiência no mercado de construção civil, a <strong>Guimara Construção</strong> é sinônimo de qualidade, pontualidade e transparência.</p>
+                    <p>Realizamos desde pequenas reformas até projetos completos com excelência.</p>
+                    <a href="servicos.html" class="btn btn-primary">Conheça nossos serviços</a>
+                </div>
+                <div>
+                    <img src="fundo2.png" alt="Materiais de Construção">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="agendar" class="agendar-section">
+        <div class="container">
+            <h2 class="section-title" style="color:white;">Agende sua Obra</h2>
+            <div class="agendar-form">
+                <form id="agendamentoForm">
+                    <div class="form-group">
+                        <label>Nome Completo *</label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefone *</label>
+                            <input type="tel" value="(46) 99901-1578" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Desejada</label>
+                            <input type="date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Serviço *</label>
+                        <select required>
+                            <option value="">Selecione...</option>
+                            <option>Reformas Residenciais</option>
+                            <option>Alvenaria e Construção</option>
+                            <option>Pisos e Revestimentos</option>
+                            <option>Lajes e Coberturas</option>
+                            <option>Acabamentos Finos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Descrição / Endereço *</label>
+                        <textarea rows="4" required placeholder="Descreva o projeto..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:16px;">Solicitar Orçamento e Agendar</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Guimara Construção - Capanema, PR • Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('agendamentoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('✅ Solicitação enviada com sucesso!\n\nEntraremos em contato em breve pelo WhatsApp.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
