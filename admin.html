@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Guimara Construção</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Estilos específicos do Painel Admin */
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 4px solid var(--gray);
+        }
+        .stat-card.pendentes { border-top-color: #ef6c00; }
+        .stat-card.confirmados { border-top-color: #2e7d32; }
+        .stat-card.concluidos { border-top-color: #1565c0; }
+        
+        .stat-card h3 { font-size: 2.2rem; color: var(--dark); margin-bottom: 5px; }
+        .stat-card p { font-size: 0.95rem; font-weight: 600; color: var(--gray); }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 900px; }
+        th, td { padding: 14px 18px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        th { background-color: var(--dark); color: var(--white); font-weight: 600; }
+        tr:hover { background-color: rgba(0,0,0,0.01); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-pendente { background-color: #fff3e0; color: #ef6c00; }
+        .badge-confirmado { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-concluido { background-color: #e3f2fd; color: #1565c0; }
+
+        .btn-actions { display: flex; gap: 6px; }
+        .btn-action {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--white);
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .btn-approve { background-color: #2e7d32; }
+        .btn-approve:hover { background-color: #1b5e20; }
+        .btn-finish { background-color: #1565c0; }
+        .btn-finish:hover { background-color: #0d47a1; }
+        .btn-delete { background-color: #c62828; }
+        .btn-delete:hover { background-color: #b71c1c; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Guimara <span>Painel Admin</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Ver Site</a></li>
+                    <li><a href="admin.html" style="color: var(--primary); font-weight: bold;">Gerenciar Obras</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" style="min-height: 35vh;">
+        <div class="hero-content">
+            <h1>Controle de Agendamentos</h1>
+            <p>Gerencie pedidos recebidos, altere o status das visitas e acompanhe o andamento das obras.</p>
+        </div>
+    </section>
+
+    <section class="sobre bg-light">
+        <div class="container">
+            
+            <div class="admin-dashboard">
+                <div class="stat-card">
+                    <h3 id="countTotal">0</h3>
+                    <p>Total de Pedidos</p>
+                </div>
+                <div class="stat-card pendentes">
+                    <h3 id="countPendentes" style="color: #ef6c00;">0</h3>
+                    <p>Aguardando Visita</p>
+                </div>
+                <div class="stat-card confirmados">
+                    <h3 id="countConfirmados" style="color: #2e7d32;">0</h3>
+                    <p>Visitas Agendadas</p>
+                </div>
+                <div class="stat-card concluidos">
+                    <h3 id="countConcluidos" style="color: #1565c0;">0</h3>
+                    <p>Obras Concluídas</p>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px; color: var(--dark);"><i class="fas fa-list"></i> Lista de Solicitações</h3>
+            <div class="table-responsive">
+                <table id="adminTable">
+                    <thead>
+                        <tr>
+                            <th>Cliente / Contato</th>
+                            <th>Serviço Solicitado</th>
+                            <th>Data Pretendida</th>
+                            <th>Local da Obra</th>
+                            <th>Status</th>
+                            <th>Ações Administrativas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Guimara Construção - Painel Interno de Controle</p>
+        </div>
+    </footer>
+
+    <script>
+        // Carrega e renderiza todos os dados vindos do backend
+        async function carregarPainelAdmin() {
+            try {
+                const response = await fetch('/api/agendamentos');
+                const dados = await response.json();
+                
+                const tbody = document.querySelector('#adminTable tbody');
+                tbody.innerHTML = '';
+
+                // Inicializadores de contadores
+                let total = dados.length;
+                let pendentes = 0;
+                let confirmados = 0;
+                let concluidos = 0;
+
+                dados.forEach((item, index) => {
+                    // Contabilidade de status
+                    if(item.status === 'Pendente') pendentes++;
+                    if(item.status === 'Confirmado') confirmados++;
+                    if(item.status === 'Concluído' || item.status === 'Concluido') concluidos++;
+
+                    const dataFormatada = item.data.split('-').reverse().join('/');
+                    
+                    // Definição visual do badge de status
+                    let badgeClass = 'badge-pendente';
+                    if (item.status === 'Confirmado') badgeClass = 'badge-confirmado';
+                    if (item.status === 'Concluído' || item.status === 'Concluido') badgeClass = 'badge-concluido';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <strong>${item.nome}</strong><br>
+                            <small style="color:#777;"><i class="fab fa-whatsapp"></i> ${item.telefone}</small>
+                        </td>
+                        <td>
+                            <span style="font-weight:600;">${item.servico}</span><br>
+                            <small style="color:#666; display:block; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.descricao}">${item.descricao || 'Sem descrição'}</small>
+                        </td>
+                        <td>${dataFormatada}</td>
+                        <td>${item.endereco}</td>
+                        <td><span class="status-badge ${badgeClass}">${item.status}</span></td>
+                        <td>
+                            <div class="btn-actions">
+                                ${item.status === 'Pendente' ? `<button class="btn-action btn-approve" onclick="alterarStatus(${index}, 'Confirmado')" title="Confirmar Visita Técnico"><i class="fas fa-check"></i> Confirmar</button>` : ''}
+                                ${item.status === 'Confirmado' ? `<button class="btn-action btn-finish" onclick="alterarStatus(${index}, 'Concluído')" title="Marcar Obra como Concluída"><i class="fas fa-flag-checkered"></i> Concluir</button>` : ''}
+                                <button class="btn-action btn-delete" onclick="deletarAgendamento(${index})" title="Remover registro"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Atualiza os cards com os números reais
+                document.getElementById('countTotal').innerText = total;
+                document.getElementById('countPendentes').innerText = pendentes;
+                document.getElementById('countConfirmados').innerText = confirmados;
+                document.getElementById('countConcluidos').innerText = concluidos;
+
+            } catch (error) {
+                console.error('Erro ao carregar o painel administrativo:', error);
+            }
+        }
+
+        // Função para alterar o status do agendamento (Aprovar / Concluir)
+        async function alterarStatus(index, novoStatus) {
+            try {
+                const response = await fetch('/api/agendamentos/status', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ index, status: novoStatus })
+                });
+
+                if (response.ok) {
+                    carregarPainelAdmin(); // Recarrega a tabela e os contadores
+                } else {
+                    alert('Erro ao atualizar o status.');
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+            }
+        }
+
+        // Função para remover um agendamento do sistema
+        async function deletarAgendamento(index) {
+            if (!confirm('Tem certeza de que deseja remover este agendamento permanentemente?')) return;
+
+            try {
+                const response = await fetch(`/api/agendamentos/${index}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    carregarPainelAdmin();
+                } else {
+                    alert('Erro ao deletar o registro.');
+                }
+            } catch (error) {
+                console.error('Erro ao deletar:', error);
+            }
+        }
+
+        // Inicia a tabela assim que abre a página
+        window.onload = carregarPainelAdmin;
+    </script>
+</body>
+</html>
