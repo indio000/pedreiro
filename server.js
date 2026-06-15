@@ -1,108 +1,35 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-const PORT = process.env.PORT || 3000;
+// ... [Mantenha os middlewares e as rotas GET e POST anteriores obtidas no passo anterior] ...
 
-// Middleware para processar dados de formulários e JSON
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// Rota Nova 4: API para Atualizar o Status (Ações do Admin de aprovar ou concluir)
+app.put('/api/agendamentos/status', (req, res) => {
+    const { index, status } = req.body;
 
-// Servir os ficheiros estáticos (HTML, CSS, Imagens) a partir da pasta raiz
-app.use(express.static(path.join(__dirname)));
-
-// Base de dados simulada em memória (reinicia quando o servidor for reiniciado)
-let bancoAgendamentos = [
-    {
-        nome: "Carlos Alberto Ferreira",
-        telefone: "(46) 99901-1111",
-        servico: "Reformas Residenciais",
-        data: "2026-06-18",
-        endereco: "Av. Silva Jardim, Centro - Capanema",
-        descricao: "Reforma completa do banheiro.",
-        status: "Confirmado"
-    },
-    {
-        nome: "Mariana de Souza",
-        telefone: "(46) 99902-2222",
-        servico: "Pisos e Revestimentos",
-        data: "2026-06-22",
-        endereco: "Rua Mato Grosso, 450 - Bairro Novo",
-        descricao: "Colocação de porcelanato na sala.",
-        status: "Pendente"
-    },
-    {
-        nome: "Ricardo Oliveira Santos",
-        telefone: "(46) 99903-3333",
-        servico: "Alvenaria e Estruturas",
-        data: "2026-06-25",
-        endereco: "Linha São Cristóvão, Interior",
-        descricao: "Levantar muro nos fundos do terreno.",
-        status: "Concluído"
+    if (index === undefined || !status) {
+        return res.status(400).json({ error: "Dados incompletos para atualização." });
     }
-];
 
-// Rota 1: API para listar todos os agendamentos (usado em consultas.html)
-app.get('/api/agendamentos', (req, res) => {
-    res.json(bancoAgendamentos);
+    if (bancoAgendamentos[index]) {
+        bancoAgendamentos[index].status = status;
+        return res.json({ message: `Status alterado para ${status} com sucesso!` });
+    } else {
+        return res.status(404).json({ error: "Agendamento não localizado." });
+    }
 });
 
-// Rota 2: API para buscar o status de um pedido específico pelo telefone (usado em status.html)
-app.get('/api/agendamentos/buscar', (req, res) => {
-    const telefoneBusca = req.query.telefone;
+// Rota Nova 5: API para Deletar um registro (Ação do Admin de excluir da lista)
+app.delete('/api/agendamentos/:index', (req, res) => {
+    const index = parseInt(req.params.index, 10);
 
-    if (!telefoneBusca) {
-        return res.status(400).json({ error: "Telefone não informado." });
+    if (isNaN(index) || index < 0 || index >= bancoAgendamentos.length) {
+        return res.status(404).json({ error: "Registro não encontrado para exclusão." });
     }
 
-    // Limpa os caracteres não numéricos para facilitar a comparação precisa
-    const telefoneLimpo = telefoneBusca.replace(/\D/g, '');
-
-    if (telefoneLimpo === '') {
-        return res.status(400).json({ error: "Telefone inválido." });
-    }
-
-    // Procura o agendamento correspondente na nossa lista
-    const agendamentoEncontrado = bancoAgendamentos.find(item => {
-        const itemTelLimpo = item.telefone ? item.telefone.replace(/\D/g, '') : '';
-        return itemTelLimpo.includes(telefoneLimpo) || telefoneLimpo.includes(itemTelLimpo);
-    });
-
-    if (!agendamentoEncontrado) {
-        return res.status(404).json({ error: "Nenhum pedido encontrado para este telefone." });
-    }
-
-    res.json(agendamentoEncontrado);
+    // Remove do array na memória
+    bancoAgendamentos.splice(index, 1);
+    res.json({ message: "Agendamento excluído com sucesso do sistema." });
 });
 
-// Rota 3: API para receber e registar novos agendamentos (usado em agendamento.html)
-app.post('/api/agendamentos', (req, res) => {
-    const { nome, telefone, endereco, data, servico, descricao } = req.body;
-
-    // Validação básica dos campos obrigatórios
-    if (!nome || !telefone || !endereco || !data || !servico) {
-        return res.status(400).json({ error: "Por favor, preencha todos os campos obrigatórios." });
-    }
-
-    const novoAgendamento = {
-        nome,
-        telefone,
-        endereco,
-        data,
-        servico,
-        descricao: descricao || "",
-        status: "Pendente" // Todo pedido novo inicia como Pendente por padrão
-    };
-
-    bancoAgendamentos.push(novoAgendamento);
-    res.status(201).json({ message: "Agendamento solicitado com sucesso!" });
-});
-
-// Rota principal: Serve o arquivo index.html na raiz do site
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Inicialização do Servidor Node.js
+// Iniciar o Servidor
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(`   Guimara Construção operacional em: http://localhost:${PORT}`);
