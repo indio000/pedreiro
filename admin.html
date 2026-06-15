@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Estilos específicos do Painel Admin */
         .admin-dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -55,12 +54,13 @@
 
         .btn-actions { display: flex; gap: 6px; }
         .btn-action {
-            padding: 6px 10px;
+            padding: 6px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             color: var(--white);
             font-size: 0.85rem;
+            font-weight: 600;
             transition: var(--transition);
         }
         .btn-approve { background-color: #2e7d32; }
@@ -143,7 +143,6 @@
     </footer>
 
     <script>
-        // Carrega e renderiza todos os dados vindos do backend
         async function carregarPainelAdmin() {
             try {
                 const response = await fetch('/api/agendamentos');
@@ -152,21 +151,18 @@
                 const tbody = document.querySelector('#adminTable tbody');
                 tbody.innerHTML = '';
 
-                // Inicializadores de contadores
                 let total = dados.length;
                 let pendentes = 0;
                 let confirmados = 0;
                 let concluidos = 0;
 
-                dados.forEach((item, index) => {
-                    // Contabilidade de status
+                dados.forEach((item) => {
                     if(item.status === 'Pendente') pendentes++;
                     if(item.status === 'Confirmado') confirmados++;
                     if(item.status === 'Concluído' || item.status === 'Concluido') concluidos++;
 
                     const dataFormatada = item.data.split('-').reverse().join('/');
                     
-                    // Definição visual do badge de status
                     let badgeClass = 'badge-pendente';
                     if (item.status === 'Confirmado') badgeClass = 'badge-confirmado';
                     if (item.status === 'Concluído' || item.status === 'Concluido') badgeClass = 'badge-concluido';
@@ -179,23 +175,22 @@
                         </td>
                         <td>
                             <span style="font-weight:600;">${item.servico}</span><br>
-                            <small style="color:#666; display:block; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.descricao}">${item.descricao || 'Sem descrição'}</small>
+                            <small style="color:#666;">${item.descricao || 'Sem descrição'}</small>
                         </td>
                         <td>${dataFormatada}</td>
                         <td>${item.endereco}</td>
                         <td><span class="status-badge ${badgeClass}">${item.status}</span></td>
                         <td>
                             <div class="btn-actions">
-                                ${item.status === 'Pendente' ? `<button class="btn-action btn-approve" onclick="alterarStatus(${index}, 'Confirmado')" title="Confirmar Visita Técnico"><i class="fas fa-check"></i> Confirmar</button>` : ''}
-                                ${item.status === 'Confirmado' ? `<button class="btn-action btn-finish" onclick="alterarStatus(${index}, 'Concluído')" title="Marcar Obra como Concluída"><i class="fas fa-flag-checkered"></i> Concluir</button>` : ''}
-                                <button class="btn-action btn-delete" onclick="deletarAgendamento(${index})" title="Remover registro"><i class="fas fa-trash-alt"></i></button>
+                                ${item.status === 'Pendente' ? `<button class="btn-action btn-approve" onclick="alterarStatus('${item.id}', 'Confirmado')"><i class="fas fa-check"></i> Confirmar</button>` : ''}
+                                ${item.status === 'Confirmado' ? `<button class="btn-action btn-finish" onclick="alterarStatus('${item.id}', 'Concluído')"><i class="fas fa-flag-checkered"></i> Concluir</button>` : ''}
+                                <button class="btn-action btn-delete" onclick="deletarAgendamento('${item.id}')"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // Atualiza os cards com os números reais
                 document.getElementById('countTotal').innerText = total;
                 document.getElementById('countPendentes').innerText = pendentes;
                 document.getElementById('countConfirmados').innerText = confirmados;
@@ -206,45 +201,42 @@
             }
         }
 
-        // Função para alterar o status do agendamento (Aprovar / Concluir)
-        async function alterarStatus(index, novoStatus) {
+        async function alterarStatus(id, novoStatus) {
             try {
                 const response = await fetch('/api/agendamentos/status', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index, status: novoStatus })
+                    body: JSON.stringify({ id, status: novoStatus })
                 });
 
                 if (response.ok) {
-                    carregarPainelAdmin(); // Recarrega a tabela e os contadores
+                    carregarPainelAdmin();
                 } else {
-                    alert('Erro ao atualizar o status.');
+                    alert('Erro ao atualizar status do agendamento.');
                 }
             } catch (error) {
                 console.error('Erro de conexão:', error);
             }
         }
 
-        // Função para remover um agendamento do sistema
-        async function deletarAgendamento(index) {
-            if (!confirm('Tem certeza de que deseja remover este agendamento permanentemente?')) return;
+        async function deletarAgendamento(id) {
+            if (!confirm('Tem certeza de que deseja remover permanentemente?')) return;
 
             try {
-                const response = await fetch(`/api/agendamentos/${index}`, {
+                const response = await fetch(`/api/agendamentos/${id}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
                     carregarPainelAdmin();
                 } else {
-                    alert('Erro ao deletar o registro.');
+                    alert('Erro ao deletar registro.');
                 }
             } catch (error) {
                 console.error('Erro ao deletar:', error);
             }
         }
 
-        // Inicia a tabela assim que abre a página
         window.onload = carregarPainelAdmin;
     </script>
 </body>
