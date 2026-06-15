@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Agendamentos - Guimara Construção</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para a página de consultas integrados ao padrão do site */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .search-box input {
+            flex: 1;
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+        }
+        th, td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: var(--dark);
+            color: var(--white);
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-confirmado {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status-pendente {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Guimara <span>Construção</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="servicos.html">Serviços</a></li>
+                    <li><a href="clientes.html">Clientes</a></li>
+                    <li><a href="agendamento.html">Agendar Visita</a></li>
+                    <li><a href="consultas.html">Consultar</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+            <a href="https://wa.me/5546999011578" target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> (46) 99901-1578
+            </a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Consultar Agendamentos</h1>
+            <p>Acompanhe o estado da sua solicitação de visita técnica ou veja os compromissos marcados.</p>
+        </div>
+    </section>
+
+    <section class="sobre bg-light">
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto;">
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Pesquise por nome, serviço ou endereço...">
+                    <button class="btn btn-primary" onclick="filtrarTabela()"><i class="fas fa-search"></i> Filtrar</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="agendamentosTable">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Serviço</th>
+                                <th>Data da Visita</th>
+                                <th>Endereço</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Carlos Alberto Ferreira</strong></td>
+                                <td>Reformas Residenciais</td>
+                                <td>18/06/2026</td>
+                                <td>Av. Silva Jardim, Centro - Capanema</td>
+                                <td><span class="status status-confirmado"><i class="fas fa-check-circle"></i> Confirmado</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mariana de Souza</strong></td>
+                                <td>Pisos e Revestimentos</td>
+                                <td>22/06/2026</td>
+                                <td>Rua Mato Grosso, 450 - Bairro Novo</td>
+                                <td><span class="status status-pendente"><i class="fas fa-clock"></i> Pendente</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ricardo Oliveira Santos</strong></td>
+                                <td>Alvenaria e Estruturas</td>
+                                <td>25/06/2026</td>
+                                <td>Linha São Cristóvão, Interior</td>
+                                <td><span class="status status-pendente"><i class="fas fa-clock"></i> Pendente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Guimara Construção - Capanema, PR</p>
+        </div>
+    </footer>
+
+    <script>
+        function filtrarTabela() {
+            const input = document.getElementById("searchInput");
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById("agendamentosTable");
+            const tr = table.getElementsByTagName("tr");
+
+            // Percorre todas as linhas (exceto o cabeçalho) e oculta as que não correspondem à pesquisa
+            for (let i = 1; i < tr.length; i++) {
+                let match = false;
+                const tds = tr[i].getElementsByTagName("td");
+                
+                for (let j = 0; j < tds.length; j++) {
+                    if (tds[j]) {
+                        if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (match) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // Executa a filtragem automaticamente enquanto o usuário digita
+        document.getElementById("searchInput").addEventListener("keyup", filtrarTabela);
+    </script>
+</body>
+</html>
