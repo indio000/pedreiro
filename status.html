@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Pedido - Guimara Construção</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Estilos da Timeline de Status */
+        .status-tracker {
+            margin-top: 40px;
+            display: none; /* Oculto até que seja feita a busca */
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin: 40px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #ddd;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+        .timeline-progress {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0%; /* Controlado dinamicamente via JS */
+            height: 4px;
+            background: var(--primary);
+            z-index: 2;
+            transform: translateY(-50%);
+            transition: width 0.5s ease-in-out;
+        }
+        .step {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            background: #f8f9fa;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ddd;
+            transition: var(--transition);
+        }
+        .step i {
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+        .step.active {
+            border-color: var(--primary);
+            background: var(--white);
+        }
+        .step.active i {
+            color: var(--primary);
+        }
+        .step.completed {
+            border-color: #25D366;
+            background: #25D366;
+        }
+        .step.completed i {
+            color: var(--white);
+        }
+        .step-label {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-width: max-content;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray);
+        }
+        .order-details {
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .order-details p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Guimara <span>Construção</span></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="servicos.html">Serviços</a></li>
+                    <li><a href="clientes.html">Clientes</a></li>
+                    <li><a href="agendamento.html">Agendar Visita</a></li>
+                    <li><a href="status.html">Status do Pedido</a></li>
+                    <li><a href="consultas.html">Consultar Todos</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+            <a href="https://wa.me/5546999011578" target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> (46) 99901-1578
+            </a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Acompanhar meu Pedido</h1>
+            <p>Introduza o número de telefone cadastrado para verificar o andamento da sua solicitação.</p>
+        </div>
+    </section>
+
+    <section class="sobre bg-light">
+        <div class="container">
+            <div style="max-width: 650px; margin: 0 auto;">
+                
+                <div class="form-container" style="padding: 30px;">
+                    <div class="form-group">
+                        <label for="searchTelefone">Número de Telefone/WhatsApp:</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="tel" id="searchTelefone" placeholder="Ex: (46) 99901-1578" required>
+                            <button class="btn btn-primary" onclick="buscarStatus()"><i class="fas fa-search"></i> Buscar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="trackerPanel" class="status-tracker">
+                    <h3 style="color: var(--dark); text-align: center;" id="txtCliente">Olá, Cliente</h3>
+                    <p style="text-align: center; color: var(--gray);" id="txtServico">Pedido de Serviço</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-progress" id="progressLine"></div>
+                        
+                        <div class="step" id="step1">
+                            <i class="fas fa-file-invoice"></i>
+                            <div class="step-label">Solicitado</div>
+                        </div>
+                        <div class="step" id="step2">
+                            <i class="fas fa-calendar-check"></i>
+                            <div class="step-label">Confirmado</div>
+                        </div>
+                        <div class="step" id="step3">
+                            <i class="fas fa-check-double"></i>
+                            <div class="step-label">Concluído</div>
+                        </div>
+                    </div>
+
+                    <div class="order-details">
+                        <h4 style="margin-bottom: 15px; color: var(--dark);">Informações do Agendamento:</h4>
+                        <p>📍 <strong>Local da Visita:</strong> <span id="detalheEndereco">-</span></p>
+                        <p>📅 <strong>Data Agendada:</strong> <span id="detalheData">-</span></p>
+                        <p>🛠️ <strong>Status Atual:</strong> <span id="detalheStatus" style="font-weight: bold; color: var(--primary);">-</span></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Guimara Construção - Capanema, PR</p>
+        </div>
+    </footer>
+
+    <script>
+        async function buscarStatus() {
+            const telefone = document.getElementById('searchTelefone').value;
+            const trackerPanel = document.getElementById('trackerPanel');
+
+            if (!telefone) {
+                alert('Por favor, introduza um número de telefone.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/agendamentos/buscar?telefone=${encodeURIComponent(telefone)}`);
+                
+                if (!response.ok) {
+                    alert('Nenhum pedido ou agendamento foi localizado com este número.');
+                    trackerPanel.style.display = 'none';
+                    return;
+                }
+
+                const agendamento = await response.json();
+                
+                // Exibe o painel
+                trackerPanel.style.display = 'block';
+                
+                // Preenche os textos de apoio
+                document.getElementById('txtCliente').innerText = `Olá, ${agendamento.nome}`;
+                document.getElementById('txtServico').innerText = `Projeto: ${agendamento.servico}`;
+                document.getElementById('detalheEndereco').innerText = agendamento.endereco;
+                
+                const dataFormatada = agendamento.data.split('-').reverse().join('/');
+                document.getElementById('detalheData').innerText = dataFormatada;
+                document.getElementById('detalheStatus').innerText = agendamento.status;
+
+                // Reseta classes de estado anteriores
+                const s1 = document.getElementById('step1');
+                const s2 = document.getElementById('step2');
+                const s3 = document.getElementById('step3');
+                const progress = document.getElementById('progressLine');
+                
+                s1.className = 'step'; s2.className = 'step'; s3.className = 'step';
+
+                // Aplica lógica de preenchimento baseado no Status do Banco
+                if (agendamento.status === 'Pendente') {
+                    s1.className = 'step active';
+                    progress.style.width = '0%';
+                } else if (agendamento.status === 'Confirmado') {
+                    s1.className = 'step completed';
+                    s2.className = 'step active';
+                    progress.style.width = '50%';
+                } else if (agendamento.status === 'Concluido' || agendamento.status === 'Concluído') {
+                    s1.className = 'step completed';
+                    s2.className = 'step completed';
+                    s3.className = 'step completed';
+                    progress.style.width = '100%';
+                }
+
+            } catch (error) {
+                console.error('Erro ao processar busca:', error);
+                alert('Erro de conexão ao servidor.');
+            }
+        }
+    </script>
+</body>
+</html>
