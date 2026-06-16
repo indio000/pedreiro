@@ -4,51 +4,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes - Guimara Construção</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Estilos customizados para feedbacks dinâmicos baseados no seu design */
+        .feedback-section {
+            padding: 60px 0;
+        }
+        .feedbacks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        .feedback-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+            position: relative;
+        }
+        .feedback-card p {
+            font-style: italic;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        .feedback-card strong {
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        .feedback-card small {
+            display: block;
+            color: #999;
+            margin-top: 5px;
+        }
+        .feedback-card .quote-icon {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: rgba(230, 81, 0, 0.1);
+        }
+
+        /* Container do Formulário */
+        .form-feedback-container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-feedback-container h3 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <div class="logo"><h1>Guimara <span>Construção</span></h1></div>
+            <div class="logo">
+                <h1>Guimara <span>Construção</span></h1>
+            </div>
             <nav>
                 <ul>
                     <li><a href="index.html">Início</a></li>
                     <li><a href="servicos.html">Serviços</a></li>
-                    <li><a href="clientes.html">Clientes</a></li>
-                    <li><a href="index.html#agendar">Agendar Obra</a></li>
+                    <li><a href="clientes.html" style="color: var(--primary); font-weight: bold;">Clientes</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
-            <a href="https://wa.me/5546999011578" target="_blank" class="btn btn-primary">
-                <i class="fab fa-whatsapp"></i> WhatsApp
+            <a href="https://wa.me/5546999011578" target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> (46) 99901-1578
             </a>
         </div>
     </header>
 
-    <section class="hero" style="min-height: 60vh;">
+    <section class="hero" style="height: 40vh; background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1541888941-6e5c4e8f7a5f'); background-size: cover; background-position: center;">
         <div class="hero-content">
-            <h1>Clientes Satisfeitos</h1>
+            <h1>Nossos Clientes & Depoimentos</h1>
+            <p>A satisfação de quem constrói com confiança e qualidade.</p>
         </div>
     </section>
 
-    <section style="padding: 100px 0;">
+    <section class="feedback-section bg-light">
         <div class="container">
-            <h2 class="section-title">O que nossos clientes dizem</h2>
-            <div class="grid">
-                <div class="card">
-                    <p>"Excelente profissional! Fez a reforma da minha casa com qualidade e no prazo."</p>
-                    <strong>- Maria Silva, Capanema</strong>
+            
+            <h2 style="text-align: center; margin-bottom: 40px; color: var(--dark);">O que dizem sobre nosso trabalho</h2>
+            
+            <div class="feedbacks-grid" id="feedbacksContainer">
                 </div>
-                <div class="card">
-                    <p>"Muito caprichoso e honesto. Recomendo para quem quer um bom pedreiro."</p>
-                    <strong>- João Mendes, Capanema</strong>
-                </div>
-                <div class="card">
-                    <p>"Trabalho impecável. Transformou minha cozinha completamente."</p>
-                    <strong>- Ana Paula, Capanema - PR</strong>
-                </div>
+
+            <div class="form-feedback-container">
+                <h3><i class="fas fa-comment-dots"></i> Deixe a sua Opinião</h3>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="nome">Seu Nome Completo:</label>
+                        <input type="text" id="nome" placeholder="Ex: João da Silva" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cidade">Sua Cidade / Estado:</label>
+                        <input type="text" id="cidade" placeholder="Ex: Capanema - PR" default="Capanema - PR">
+                    </div>
+                    <div class="form-group">
+                        <label for="mensagem">Sua Opinião sobre o Serviço:</label>
+                        <textarea id="mensagem" placeholder="Conte como foi a sua experiência com a Guimara Construção..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border: none; padding: 14px; font-size: 1rem; cursor: pointer;">
+                        Enviar Avaliação
+                    </button>
+                </form>
             </div>
+
         </div>
     </section>
 
@@ -57,5 +152,66 @@
             <p>&copy; 2026 Guimara Construção - Capanema, PR</p>
         </div>
     </footer>
+
+    <script>
+        // Função para carregar os feedbacks do servidor backend
+        async function carregarFeedbacks() {
+            try {
+                const response = await fetch('/api/feedbacks');
+                const feedbacks = await response.json();
+                
+                const container = document.getElementById('feedbacksContainer');
+                container.innerHTML = ''; // Limpa antes de carregar
+
+                feedbacks.forEach(item => {
+                    // Formata a data se houver (AAAA-MM-DD -> DD/MM/AAAA)
+                    const dataFormatada = item.data ? item.data.split('-').reverse().join('/') : '';
+
+                    const card = document.createElement('div');
+                    card.className = 'feedback-card';
+                    card.innerHTML = `
+                        <p>"${item.mensagem}"</p>
+                        <strong>- ${item.nome}</strong>
+                        <small><i class="fas fa-map-marker-alt"></i> ${item.cidade} ${dataFormatada ? `• ${dataFormatada}` : ''}</small>
+                        <i class="fas fa-quote-right quote-icon"></i>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Erro ao buscar feedbacks:", error);
+            }
+        }
+
+        // Evento de envio de novo formulário de feedback
+        document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const cidade = document.getElementById('cidade').value;
+            const mensagem = document.getElementById('mensagem').value;
+
+            try {
+                const response = await fetch('/api/feedbacks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, cidade, mensagem })
+                });
+
+                if (response.ok) {
+                    alert('Muito obrigado pelo seu feedback! Ele foi publicado com sucesso.');
+                    document.getElementById('feedbackForm').reset(); // Limpa os campos
+                    carregarFeedbacks(); // Atualiza a lista na tela imediatamente
+                } else {
+                    alert('Erro ao enviar feedback. Tente novamente.');
+                }
+            } catch (error) {
+                console.error("Erro na requisição:", error);
+                alert('Erro ao conectar ao servidor.');
+            }
+        });
+
+        // Executa ao carregar a página pela primeira vez
+        window.onload = carregarFeedbacks;
+    </script>
 </body>
 </html>
