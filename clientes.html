@@ -3,88 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes - Guimara Construção</title>
+    <title>Clientes & Depoimentos - Guimara Construção</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Estilos customizados para feedbacks dinâmicos baseados no seu design */
+        /* Estilos customizados para feedbacks dinâmicos baseados no design premium */
         .feedback-section {
-            padding: 60px 0;
+            padding: 80px 0;
         }
+        
+        .section-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 50px auto;
+        }
+
+        .section-intro h2 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .section-intro h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary);
+            margin: 12px auto 0 auto;
+            border-radius: 2px;
+        }
+
         .feedbacks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 50px;
+            gap: 30px;
+            margin-bottom: 60px;
         }
+        
         .feedback-card {
             background: var(--white);
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
             border-left: 5px solid var(--primary);
             position: relative;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
+
+        .feedback-card:hover {
+            transform: translateY(-5px);
+        }
+        
         .feedback-card p {
             font-style: italic;
             color: var(--gray);
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 1.05rem;
         }
+        
         .feedback-card strong {
             color: var(--dark);
-            font-size: 0.95rem;
+            font-size: 1rem;
+            font-weight: 700;
         }
+        
         .feedback-card small {
             display: block;
-            color: #999;
-            margin-top: 5px;
+            color: #888;
+            margin-top: 6px;
+            font-size: 0.85rem;
         }
+        
         .feedback-card .quote-icon {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 2rem;
-            color: rgba(230, 81, 0, 0.1);
+            bottom: 25px;
+            right: 25px;
+            font-size: 2.2rem;
+            color: rgba(230, 81, 0, 0.08);
         }
 
         /* Container do Formulário */
         .form-feedback-container {
             background: var(--white);
-            padding: 40px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            max-width: 600px;
+            padding: 45px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 650px;
             margin: 0 auto;
+            border: 1px solid rgba(0, 0, 0, 0.02);
         }
+        
         .form-feedback-container h3 {
             color: var(--dark);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
+        
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
+        
         .form-group label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 8px;
             color: var(--dark);
+            font-size: 0.95rem;
         }
+        
         .form-group input, .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: var(--radius);
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             font-family: inherit;
             font-size: 1rem;
+            background-color: #fafafa;
+            outline: none;
+            transition: all 0.3s ease;
         }
+        
         .form-group textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 130px;
         }
+        
         .form-group input:focus, .form-group textarea:focus {
-            outline: none;
             border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
+        }
+
+        .no-feedbacks {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            color: #888;
+            font-style: italic;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -99,6 +163,8 @@
                     <li><a href="index.html">Início</a></li>
                     <li><a href="servicos.html">Serviços</a></li>
                     <li><a href="clientes.html" style="color: var(--primary); font-weight: bold;">Clientes</a></li>
+                    <li><a href="agendamento.html">Agendar Visita</a></li>
+                    <li><a href="status.html">Status do Pedido</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
@@ -108,23 +174,26 @@
         </div>
     </header>
 
-    <section class="hero" style="height: 40vh; background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1541888941-6e5c4e8f7a5f'); background-size: cover; background-position: center;">
+    <section class="hero" style="min-height: 35vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1541888941-6e5c4e8f7a5f'); background-size: cover; background-position: center;">
         <div class="hero-content">
-            <h1>Nossos Clientes & Depoimentos</h1>
-            <p>A satisfação de quem constrói com confiança e qualidade.</p>
+            <h1>Clientes & Depoimentos</h1>
+            <p>A satisfação e o sorriso de quem constrói com confiança, transparência e alta qualidade.</p>
         </div>
     </section>
 
     <section class="feedback-section bg-light">
         <div class="container">
             
-            <h2 style="text-align: center; margin-bottom: 40px; color: var(--dark);">O que dizem sobre nosso trabalho</h2>
+            <div class="section-intro">
+                <h2>O que dizem sobre nosso trabalho</h2>
+                <p>Veja a opinião sincera de quem contratou a Guimara Construção para realizar suas reformas e edificações estruturais.</p>
+            </div>
             
             <div class="feedbacks-grid" id="feedbacksContainer">
                 </div>
 
             <div class="form-feedback-container">
-                <h3><i class="fas fa-comment-dots"></i> Deixe a sua Opinião</h3>
+                <h3><i class="fas fa-comment-dots" style="color: var(--primary); margin-right: 5px;"></i> Deixe a sua Opinião</h3>
                 <form id="feedbackForm">
                     <div class="form-group">
                         <label for="nome">Seu Nome Completo:</label>
@@ -132,14 +201,14 @@
                     </div>
                     <div class="form-group">
                         <label for="cidade">Sua Cidade / Estado:</label>
-                        <input type="text" id="cidade" placeholder="Ex: Capanema - PR" default="Capanema - PR">
+                        <input type="text" id="cidade" placeholder="Ex: Capanema - PR" value="Capanema - PR" required>
                     </div>
                     <div class="form-group">
                         <label for="mensagem">Sua Opinião sobre o Serviço:</label>
-                        <textarea id="mensagem" placeholder="Conte como foi a sua experiência com a Guimara Construção..." required></textarea>
+                        <textarea id="mensagem" placeholder="Conte em detalhes como foi a sua experiência com a nossa equipe, atendimento e acabamento..." required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; border: none; padding: 14px; font-size: 1rem; cursor: pointer;">
-                        Enviar Avaliação
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border: none; padding: 15px; font-size: 1rem; cursor: pointer; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Enviar Minha Avaliação
                     </button>
                 </form>
             </div>
@@ -156,12 +225,21 @@
     <script>
         // Função para carregar os feedbacks do servidor backend
         async function carregarFeedbacks() {
+            const container = document.getElementById('feedbacksContainer');
             try {
                 const response = await fetch('/api/feedbacks');
-                const feedbacks = await response.json();
                 
-                const container = document.getElementById('feedbacksContainer');
-                container.innerHTML = ''; // Limpa antes de carregar
+                if (!response.ok) {
+                    throw new Error('Falha na resposta do servidor');
+                }
+                
+                const feedbacks = await response.json();
+                container.innerHTML = ''; // Limpa o esqueleto antes de carregar
+
+                if (feedbacks.length === 0) {
+                    container.innerHTML = '<div class="no-feedbacks">Nenhum depoimento publicado ainda. Seja o primeiro a deixar sua avaliação abaixo!</div>';
+                    return;
+                }
 
                 feedbacks.forEach(item => {
                     // Formata a data se houver (AAAA-MM-DD -> DD/MM/AAAA)
@@ -171,24 +249,27 @@
                     card.className = 'feedback-card';
                     card.innerHTML = `
                         <p>"${item.mensagem}"</p>
-                        <strong>- ${item.nome}</strong>
-                        <small><i class="fas fa-map-marker-alt"></i> ${item.cidade} ${dataFormatada ? `• ${dataFormatada}` : ''}</small>
+                        <div>
+                            <strong>- ${item.nome}</strong>
+                            <small><i class="fas fa-map-marker-alt"></i> ${item.cidade} ${dataFormatada ? `• ${dataFormatada}` : ''}</small>
+                        </div>
                         <i class="fas fa-quote-right quote-icon"></i>
                     `;
                     container.appendChild(card);
                 });
             } catch (error) {
-                console.error("Erro ao buscar feedbacks:", error);
+                console.error("Erro ao buscar feedbacks no banco:", error);
+                container.innerHTML = '<div class="no-feedbacks" style="color: #c62828;"><i class="fas fa-exclamation-triangle"></i> Não foi possível carregar as avaliações no momento.</div>';
             }
         }
 
-        // Evento de envio de novo formulário de feedback
+        // Evento de envio do formulário de feedback para a API
         document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const nome = document.getElementById('nome').value;
-            const cidade = document.getElementById('cidade').value;
-            const mensagem = document.getElementById('mensagem').value;
+            const nome = document.getElementById('nome').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            const mensagem = document.getElementById('mensagem').value.trim();
 
             try {
                 const response = await fetch('/api/feedbacks', {
@@ -199,14 +280,15 @@
 
                 if (response.ok) {
                     alert('Muito obrigado pelo seu feedback! Ele foi publicado com sucesso.');
-                    document.getElementById('feedbackForm').reset(); // Limpa os campos
-                    carregarFeedbacks(); // Atualiza a lista na tela imediatamente
+                    document.getElementById('feedbackForm').reset(); // Limpa os campos de texto
+                    document.getElementById('cidade').value = "Capanema - PR"; // Restaura o valor padrão
+                    carregarFeedbacks(); // Atualiza a lista na tela de forma assíncrona imediata
                 } else {
-                    alert('Erro ao enviar feedback. Tente novamente.');
+                    alert('Ocorreu um erro no servidor ao tentar processar o envio. Tente novamente.');
                 }
             } catch (error) {
-                console.error("Erro na requisição:", error);
-                alert('Erro ao conectar ao servidor.');
+                console.error("Erro na requisição POST:", error);
+                alert('Erro de conexão! Verifique se o servidor backend está online.');
             }
         });
 
