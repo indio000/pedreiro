@@ -10,6 +10,7 @@
         /* Estilos customizados para feedbacks dinâmicos baseados no design premium */
         .feedback-section {
             padding: 80px 0;
+            background-color: var(--light);
         }
         
         .section-intro {
@@ -150,6 +151,26 @@
             font-style: italic;
             font-size: 1.1rem;
         }
+
+        /* Estilo do botão adaptado para usar as variáveis globais (--primary e --primary-hover) */
+        .btn-enviar-feedback {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 700;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: var(--primary);
+            color: var(--white);
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-enviar-feedback:hover {
+            background-color: var(--primary-hover);
+        }
     </style>
 </head>
 <body>
@@ -163,8 +184,7 @@
                     <li><a href="index.html">Início</a></li>
                     <li><a href="servicos.html">Serviços</a></li>
                     <li><a href="clientes.html" style="color: var(--primary); font-weight: bold;">Clientes</a></li>
-                    <li><a href="agendamento.html">Agendar Visita</a></li>
-                    <li><a href="status.html">Status do Pedido</a></li>
+                    <li><a href="cadastro.html">Cadastro</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
@@ -181,7 +201,7 @@
         </div>
     </section>
 
-    <section class="feedback-section bg-light">
+    <section class="feedback-section">
         <div class="container">
             
             <div class="section-intro">
@@ -207,7 +227,7 @@
                         <label for="mensagem">Sua Opinião sobre o Serviço:</label>
                         <textarea id="mensagem" placeholder="Conte em detalhes como foi a sua experiência com a nossa equipe, atendimento e acabamento..." required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; border: none; padding: 15px; font-size: 1rem; cursor: pointer; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <button type="submit" class="btn-enviar-feedback">
                         Enviar Minha Avaliação
                     </button>
                 </form>
