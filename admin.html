@@ -7,27 +7,92 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+        /* Melhorias no Layout do Dashboard */
         .admin-dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         .stat-card {
             background: var(--white);
-            padding: 20px;
+            padding: 25px 20px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             text-align: center;
-            border-top: 4px solid var(--gray);
+            border-top: 5px solid #777;
+            transition: transform 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
         }
         .stat-card.pendentes { border-top-color: #ef6c00; }
         .stat-card.confirmados { border-top-color: #2e7d32; }
         .stat-card.concluidos { border-top-color: #1565c0; }
         
-        .stat-card h3 { font-size: 2.2rem; color: var(--dark); margin-bottom: 5px; }
-        .stat-card p { font-size: 0.95rem; font-weight: 600; color: var(--gray); }
+        .stat-card h3 { font-size: 2.5rem; color: var(--dark); margin-bottom: 5px; font-weight: 700; }
+        .stat-card p { font-size: 0.9rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
 
+        /* Controles de Busca e Filtros */
+        .toolbar-admin {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-filter {
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            background: var(--white);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray);
+            transition: all 0.2s ease;
+        }
+        .btn-filter:hover, .btn-filter.active {
+            background-color: var(--dark);
+            color: var(--white);
+            border-color: var(--dark);
+        }
+
+        /* Melhorias na Tabela */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -35,40 +100,54 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 900px; }
-        th, td { padding: 14px 18px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
-        th { background-color: var(--dark); color: var(--white); font-weight: 600; }
-        tr:hover { background-color: rgba(0,0,0,0.01); }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 950px; }
+        th, td { padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 0.95rem; vertical-align: middle; }
+        th { background-color: var(--dark); color: var(--white); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        tr:hover { background-color: rgba(0,0,0,0.015); }
 
+        /* Emblemas de status melhorados */
         .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
         }
-        .badge-pendente { background-color: #fff3e0; color: #ef6c00; }
-        .badge-confirmado { background-color: #e8f5e9; color: #2e7d32; }
-        .badge-concluido { background-color: #e3f2fd; color: #1565c0; }
+        .badge-pendente { background-color: #fff3e0; color: #e65100; }
+        .badge-confirmado { background-color: #e8f5e9; color: #1b5e20; }
+        .badge-concluido { background-color: #e3f2fd; color: #0d47a1; }
 
-        .btn-actions { display: flex; gap: 6px; }
+        .btn-actions { display: flex; gap: 8px; }
         .btn-action {
-            padding: 6px 12px;
+            padding: 8px 14px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             color: var(--white);
             font-size: 0.85rem;
             font-weight: 600;
-            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
         }
         .btn-approve { background-color: #2e7d32; }
-        .btn-approve:hover { background-color: #1b5e20; }
+        .btn-approve:hover { background-color: #1b5e20; transform: translateY(-1px); }
         .btn-finish { background-color: #1565c0; }
-        .btn-finish:hover { background-color: #0d47a1; }
-        .btn-delete { background-color: #c62828; }
-        .btn-delete:hover { background-color: #b71c1c; }
+        .btn-finish:hover { background-color: #0d47a1; transform: translateY(-1px); }
+        .btn-delete { background-color: #c62828; padding: 8px 10px; }
+        .btn-delete:hover { background-color: #b71c1c; transform: translateY(-1px); }
+
+        .no-data {
+            text-align: center;
+            padding: 40px !important;
+            color: #999;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -86,10 +165,10 @@
         </div>
     </header>
 
-    <section class="hero" style="min-height: 35vh;">
+    <section class="hero" style="min-height: 30vh;">
         <div class="hero-content">
             <h1>Controle de Agendamentos</h1>
-            <p>Gerencie pedidos recebidos, altere o status das visitas e acompanhe o andamento das obras.</p>
+            <p>Gerencie pedidos recebidos, altere o status das visitas e acompanhe o andamento das obras em tempo real.</p>
         </div>
     </section>
 
@@ -115,7 +194,19 @@
                 </div>
             </div>
 
-            <h3 style="margin-bottom: 15px; color: var(--dark);"><i class="fas fa-list"></i> Lista de Solicitações</h3>
+            <div class="toolbar-admin">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="inputBusca" placeholder="Buscar por cliente, telefone ou serviço..." oninput="filtrarTabela()">
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn-filter active" id="btnFiltroAll" onclick="definirFiltroStatus('Todos')">Todos</button>
+                    <button class="btn-filter" id="btnFiltroPendente" onclick="definirFiltroStatus('Pendente')">Aguardando Visita</button>
+                    <button class="btn-filter" id="btnFiltroConfirmado" onclick="definirFiltroStatus('Confirmado')">Agendadas</button>
+                    <button class="btn-filter" id="btnFiltroConcluido" onclick="definirFiltroStatus('Concluído')">Concluídas</button>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table id="adminTable">
                     <thead>
@@ -143,62 +234,106 @@
     </footer>
 
     <script>
+        // Variáveis de Controle Globais do Estado Local
+        let listaAgendamentosGlobais = [];
+        let statusFiltroAtual = 'Todos';
+
         async function carregarPainelAdmin() {
             try {
                 const response = await fetch('/api/agendamentos');
-                const dados = await response.json();
+                listaAgendamentosGlobais = await response.json();
                 
-                const tbody = document.querySelector('#adminTable tbody');
-                tbody.innerHTML = '';
-
-                let total = dados.length;
-                let pendentes = 0;
-                let confirmados = 0;
-                let concluidos = 0;
-
-                dados.forEach((item) => {
-                    if(item.status === 'Pendente') pendentes++;
-                    if(item.status === 'Confirmado') confirmados++;
-                    if(item.status === 'Concluído' || item.status === 'Concluido') concluidos++;
-
-                    const dataFormatada = item.data.split('-').reverse().join('/');
-                    
-                    let badgeClass = 'badge-pendente';
-                    if (item.status === 'Confirmado') badgeClass = 'badge-confirmado';
-                    if (item.status === 'Concluído' || item.status === 'Concluido') badgeClass = 'badge-concluido';
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>
-                            <strong>${item.nome}</strong><br>
-                            <small style="color:#777;"><i class="fab fa-whatsapp"></i> ${item.telefone}</small>
-                        </td>
-                        <td>
-                            <span style="font-weight:600;">${item.servico}</span><br>
-                            <small style="color:#666;">${item.descricao || 'Sem descrição'}</small>
-                        </td>
-                        <td>${dataFormatada}</td>
-                        <td>${item.endereco}</td>
-                        <td><span class="status-badge ${badgeClass}">${item.status}</span></td>
-                        <td>
-                            <div class="btn-actions">
-                                ${item.status === 'Pendente' ? `<button class="btn-action btn-approve" onclick="alterarStatus('${item.id}', 'Confirmado')"><i class="fas fa-check"></i> Confirmar</button>` : ''}
-                                ${item.status === 'Confirmado' ? `<button class="btn-action btn-finish" onclick="alterarStatus('${item.id}', 'Concluído')"><i class="fas fa-flag-checkered"></i> Concluir</button>` : ''}
-                                <button class="btn-action btn-delete" onclick="deletarAgendamento('${item.id}')"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-
-                document.getElementById('countTotal').innerText = total;
-                document.getElementById('countPendentes').innerText = pendentes;
-                document.getElementById('countConfirmados').innerText = confirmados;
-                document.getElementById('countConcluidos').innerText = concluidos;
+                // Renderiza atualizando os contadores e as linhas
+                atualizarContadoresCards(listaAgendamentosGlobais);
+                filtrarTabela();
 
             } catch (error) {
                 console.error('Erro ao carregar o painel administrativo:', error);
             }
+        }
+
+        function atualizarContadoresCards(dados) {
+            let total = dados.length;
+            let pendentes = dados.filter(item => item.status === 'Pendente').length;
+            let confirmados = dados.filter(item => item.status === 'Confirmado').length;
+            let concluidos = dados.filter(item => item.status === 'Concluído' || item.status === 'Concluido').length;
+
+            document.getElementById('countTotal').innerText = total;
+            document.getElementById('countPendentes').innerText = pendentes;
+            document.getElementById('countConfirmados').innerText = confirmados;
+            document.getElementById('countConcluidos').innerText = concluidos;
+        }
+
+        function definirFiltroStatus(status) {
+            statusFiltroAtual = status;
+            
+            // Gerencia classe 'active' nos botões de filtro
+            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+            if (status === 'Todos') document.getElementById('btnFiltroAll').classList.add('active');
+            if (status === 'Pendente') document.getElementById('btnFiltroPendente').classList.add('active');
+            if (status === 'Confirmado') document.getElementById('btnFiltroConfirmado').classList.add('active');
+            if (status === 'Concluído') document.getElementById('btnFiltroConcluido').classList.add('active');
+
+            filtrarTabela();
+        }
+
+        function filtrarTabela() {
+            const textoBusca = document.getElementById('inputBusca').value.toLowerCase();
+            const tbody = document.querySelector('#adminTable tbody');
+            tbody.innerHTML = '';
+
+            // Aplica os filtros combinados (Status + Barra de Busca)
+            const dadosFiltrados = listaAgendamentosGlobais.filter(item => {
+                const atendeStatus = (statusFiltroAtual === 'Todos') || 
+                                     (statusFiltroAtual === 'Concluído' && (item.status === 'Concluído' || item.status === 'Concluido')) ||
+                                     (item.status === statusFiltroAtual);
+                
+                const atendeBusca = item.nome.toLowerCase().includes(textoBusca) || 
+                                    item.telefone.toLowerCase().includes(textoBusca) || 
+                                    item.servico.toLowerCase().includes(textoBusca) || 
+                                    item.endereco.toLowerCase().includes(textoBusca);
+
+                return atendeStatus && atendeBusca;
+            });
+
+            // Tratamento caso não existam registros correspondentes
+            if (dadosFiltrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="no-data"><i class="fas fa-folder-open"></i> Nenhum agendamento encontrado para os filtros selecionados.</td></tr>`;
+                return;
+            }
+
+            // Constrói as linhas na tabela
+            dadosFiltrados.forEach((item) => {
+                const dataFormatada = item.data.split('-').reverse().join('/');
+                
+                let badgeClass = 'badge-pendente';
+                let iconStatus = 'fa-clock';
+                if (item.status === 'Confirmado') { badgeClass = 'badge-confirmado'; iconStatus = 'fa-calendar-check'; }
+                if (item.status === 'Concluído' || item.status === 'Concluido') { badgeClass = 'badge-concluido'; iconStatus = 'fa-check-circle'; }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <strong>${item.nome}</strong><br>
+                        <small style="color:#666;"><i class="fab fa-whatsapp" style="color: #25D366;"></i> ${item.telefone}</small>
+                    </td>
+                    <td>
+                        <span style="font-weight:600; color: var(--dark);">${item.servico}</span><br>
+                        <small style="color:#777; display:block; max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.descricao}">${item.descricao || 'Sem descrição adicional'}</small>
+                    </td>
+                    <td><i class="far fa-calendar" style="color: #888; margin-right:4px;"></i> ${dataFormatada}</td>
+                    <td><span style="font-size:0.9rem; color:#444;">${item.endereco}</span></td>
+                    <td><span class="status-badge ${badgeClass}"><i class="fas ${iconStatus}"></i> ${item.status}</span></td>
+                    <td>
+                        <div class="btn-actions">
+                            ${item.status === 'Pendente' ? `<button class="btn-action btn-approve" onclick="alterarStatus('${item.id}', 'Confirmado')"><i class="fas fa-check"></i> Confirmar</button>` : ''}
+                            ${item.status === 'Confirmado' ? `<button class="btn-action btn-finish" onclick="alterarStatus('${item.id}', 'Concluído')"><i class="fas fa-flag-checkered"></i> Concluir</button>` : ''}
+                            <button class="btn-action btn-delete" onclick="deletarAgendamento('${item.id}')" title="Excluir Permanentemente"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         async function alterarStatus(id, novoStatus) {
@@ -210,7 +345,7 @@
                 });
 
                 if (response.ok) {
-                    carregarPainelAdmin();
+                    carregarPainelAdmin(); // Atualiza toda a listagem local e cards de contagem
                 } else {
                     alert('Erro ao atualizar status do agendamento.');
                 }
@@ -220,7 +355,7 @@
         }
 
         async function deletarAgendamento(id) {
-            if (!confirm('Tem certeza de que deseja remover permanentemente?')) return;
+            if (!confirm('Tem certeza de que deseja remover este agendamento permanentemente?')) return;
 
             try {
                 const response = await fetch(`/api/agendamentos/${id}`, {
@@ -237,6 +372,7 @@
             }
         }
 
+        // Executa a carga inicial quando a página abrir completamente
         window.onload = carregarPainelAdmin;
     </script>
 </body>
