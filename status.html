@@ -7,22 +7,88 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Estilos da Timeline de Status */
+        /* Container Customizado do Formulário */
+        .search-card {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            margin-bottom: 30px;
+        }
+
+        .input-group-custom {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            align-items: center;
+        }
+
+        .input-group-custom i.fa-phone-alt {
+            position: absolute;
+            left: 16px;
+            color: #999;
+            font-size: 1.05rem;
+        }
+
+        .input-group-custom input {
+            width: 100%;
+            padding: 14px 16px 14px 45px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .input-group-custom input:focus {
+            border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
+        }
+
+        .btn-search-trigger {
+            padding: 0 24px;
+            height: 50px;
+            background-color: var(--dark);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-search-trigger:hover {
+            background-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Painel do Rastreador de Status */
         .status-tracker {
-            margin-top: 40px;
             display: none; /* Oculto até que seja feita a busca */
             background: var(--white);
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            padding: 40px 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            margin-top: 30px;
         }
+
+        /* Design Moderno da Linha do Tempo (Timeline) */
         .timeline {
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: relative;
-            margin: 40px 0;
+            margin: 50px 10px 60px 10px;
         }
+
         .timeline::before {
             content: '';
             position: absolute;
@@ -30,10 +96,11 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: #ddd;
+            background: #ebebeb;
             z-index: 1;
             transform: translateY(-50%);
         }
+
         .timeline-progress {
             position: absolute;
             top: 50%;
@@ -43,58 +110,111 @@
             background: var(--primary);
             z-index: 2;
             transform: translateY(-50%);
-            transition: width 0.5s ease-in-out;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .step {
             position: relative;
             z-index: 3;
             text-align: center;
-            background: #f8f9fa;
-            width: 50px;
-            height: 50px;
+            background: #f4f5f7;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid #ddd;
-            transition: var(--transition);
+            border: 4px solid #ebebeb;
+            transition: all 0.4s ease;
         }
+
         .step i {
             color: #aaa;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
+            transition: all 0.3s ease;
         }
+
+        /* Estado: Etapa Ativa Atual */
         .step.active {
             border-color: var(--primary);
             background: var(--white);
+            box-shadow: 0 0 0 5px rgba(230, 81, 0, 0.15);
         }
+
         .step.active i {
             color: var(--primary);
         }
+
+        /* Estado: Etapa Concluída com Sucesso */
         .step.completed {
-            border-color: #25D366;
-            background: #25D366;
+            border-color: #2e7d32;
+            background: #2e7d32;
         }
+
         .step.completed i {
             color: var(--white);
         }
+
+        /* Correção Crítica do Texto das Etiquetas */
         .step-label {
             position: absolute;
-            top: 60px;
+            top: 65px;
             left: 50%;
             transform: translateX(-50%);
-            white-width: max-content;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--gray);
+            white-space: nowrap; /* CORRIGIDO: Impede quebra de texto feia */
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        .step.active .step-label {
+            color: var(--primary);
+        }
+
+        .step.completed .step-label {
+            color: #2e7d32;
+        }
+
+        /* Detalhes do Pedido */
         .order-details {
-            margin-top: 50px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
+            margin-top: 40px;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 25px;
         }
-        .order-details p {
-            margin-bottom: 10px;
-            font-size: 1rem;
+
+        .order-details h4 {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .details-grid p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .details-grid strong {
+            color: var(--dark);
+            display: block;
+            margin-bottom: 3px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -110,7 +230,7 @@
                     <li><a href="servicos.html">Serviços</a></li>
                     <li><a href="clientes.html">Clientes</a></li>
                     <li><a href="agendamento.html">Agendar Visita</a></li>
-                    <li><a href="status.html">Status do Pedido</a></li>
+                    <li><a href="status.html" style="color: var(--primary); font-weight: bold;">Status do Pedido</a></li>
                     <li><a href="consultas.html">Consultar Todos</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
@@ -121,30 +241,31 @@
         </div>
     </header>
 
-    <section class="hero">
+    <section class="hero" style="min-height: 30vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1504307651254-35680f356dfd'); background-size: cover; background-position: center;">
         <div class="hero-content">
             <h1>Acompanhar meu Pedido</h1>
-            <p>Introduza o número de telefone cadastrado para verificar o andamento da sua solicitação.</p>
+            <p>Informe o número de telefone cadastrado para verificar em tempo real o andamento da sua solicitação.</p>
         </div>
     </section>
 
-    <section class="sobre bg-light">
+    <section class="sobre bg-light" style="padding: 60px 0;">
         <div class="container">
-            <div style="max-width: 650px; margin: 0 auto;">
+            <div style="max-width: 700px; margin: 0 auto;">
                 
-                <div class="form-container" style="padding: 30px;">
-                    <div class="form-group">
-                        <label for="searchTelefone">Número de Telefone/WhatsApp:</label>
-                        <div style="display: flex; gap: 10px;">
+                <div class="search-card">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="searchTelefone" style="font-weight: 700; margin-bottom: 10px; display: block; color: var(--dark);">Número de Telefone / WhatsApp:</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-phone-alt"></i>
                             <input type="tel" id="searchTelefone" placeholder="Ex: (46) 99901-1578" required>
-                            <button class="btn btn-primary" onclick="buscarStatus()"><i class="fas fa-search"></i> Buscar</button>
+                            <button class="btn-search-trigger" onclick="buscarStatus()"><i class="fas fa-search"></i> Buscar</button>
                         </div>
                     </div>
                 </div>
 
                 <div id="trackerPanel" class="status-tracker">
-                    <h3 style="color: var(--dark); text-align: center;" id="txtCliente">Olá, Cliente</h3>
-                    <p style="text-align: center; color: var(--gray);" id="txtServico">Pedido de Serviço</p>
+                    <h3 style="color: var(--dark); text-align: center; font-size: 1.6rem; margin-bottom: 5px; font-weight: 700;" id="txtCliente">Olá, Cliente</h3>
+                    <p style="text-align: center; color: #666; font-weight: 500; font-size: 1rem;" id="txtServico">Pedido de Serviço</p>
                     
                     <div class="timeline">
                         <div class="timeline-progress" id="progressLine"></div>
@@ -164,10 +285,21 @@
                     </div>
 
                     <div class="order-details">
-                        <h4 style="margin-bottom: 15px; color: var(--dark);">Informações do Agendamento:</h4>
-                        <p>📍 <strong>Local da Visita:</strong> <span id="detalheEndereco">-</span></p>
-                        <p>📅 <strong>Data Agendada:</strong> <span id="detalheData">-</span></p>
-                        <p>🛠️ <strong>Status Atual:</strong> <span id="detalheStatus" style="font-weight: bold; color: var(--primary);">-</span></p>
+                        <h4>Informações do Agendamento</h4>
+                        <div class="details-grid">
+                            <p>
+                                <strong>📍 Local da Visita</strong>
+                                <span id="detalheEndereco">-</span>
+                            </p>
+                            <p>
+                                <strong>📅 Data Pretendida</strong>
+                                <span id="detalheData">-</span>
+                            </p>
+                            <p>
+                                <strong>🛠️ Status Atual</strong>
+                                <span id="detalheStatus" style="font-weight: 700; color: var(--primary);">-</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -183,11 +315,11 @@
 
     <script>
         async function buscarStatus() {
-            const telefone = document.getElementById('searchTelefone').value;
+            const telefone = document.getElementById('searchTelefone').value.trim();
             const trackerPanel = document.getElementById('trackerPanel');
 
             if (!telefone) {
-                alert('Por favor, introduza um número de telefone.');
+                alert('Por favor, digite um número de telefone válido.');
                 return;
             }
 
@@ -195,34 +327,38 @@
                 const response = await fetch(`/api/agendamentos/buscar?telefone=${encodeURIComponent(telefone)}`);
                 
                 if (!response.ok) {
-                    alert('Nenhum pedido ou agendamento foi localizado com este número.');
+                    alert('Nenhum agendamento foi localizado com este número de telefone.');
                     trackerPanel.style.display = 'none';
                     return;
                 }
 
                 const agendamento = await response.json();
                 
-                // Exibe o painel
+                // Ativa a exibição do painel principal
                 trackerPanel.style.display = 'block';
                 
-                // Preenche os textos de apoio
+                // Preenchimento de campos textuais nativos
                 document.getElementById('txtCliente').innerText = `Olá, ${agendamento.nome}`;
                 document.getElementById('txtServico').innerText = `Projeto: ${agendamento.servico}`;
                 document.getElementById('detalheEndereco').innerText = agendamento.endereco;
                 
+                // Formatação simples de datas de padrão ISO para PT-BR
                 const dataFormatada = agendamento.data.split('-').reverse().join('/');
                 document.getElementById('detalheData').innerText = dataFormatada;
                 document.getElementById('detalheStatus').innerText = agendamento.status;
 
-                // Reseta classes de estado anteriores
+                // Captura os nós dos passos da linha do tempo
                 const s1 = document.getElementById('step1');
                 const s2 = document.getElementById('step2');
                 const s3 = document.getElementById('step3');
                 const progress = document.getElementById('progressLine');
                 
-                s1.className = 'step'; s2.className = 'step'; s3.className = 'step';
+                // Reseta a árvore de classes CSS antes de recalcular o status
+                s1.className = 'step'; 
+                s2.className = 'step'; 
+                s3.className = 'step';
 
-                // Aplica lógica de preenchimento baseado no Status do Banco
+                // Tratamento e renderização dinâmica dos estados
                 if (agendamento.status === 'Pendente') {
                     s1.className = 'step active';
                     progress.style.width = '0%';
@@ -238,8 +374,8 @@
                 }
 
             } catch (error) {
-                console.error('Erro ao processar busca:', error);
-                alert('Erro de conexão ao servidor.');
+                console.error('Erro ao processar busca no servidor:', error);
+                alert('Erro de conexão com o banco de dados do servidor.');
             }
         }
     </script>
