@@ -18,6 +18,90 @@
             background-color: var(--admin-bg);
         }
 
+        /* Tela de Bloqueio por Senha */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: all 0.5s ease;
+        }
+
+        .login-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-box h2 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .login-box p {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .login-box button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .error-message {
+            color: #c62828;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Conteúdo principal inicialmente oculto por segurança */
+        #adminContent {
+            display: none;
+        }
+
         /* Dashboard de Indicadores Layout Moderno */
         .admin-dashboard {
             display: grid;
@@ -168,7 +252,7 @@
         tr:last-child td { border-bottom: none; }
         tr:hover { background-color: var(--tr-hover); }
 
-        /* Emblemas de Status Estilo Minimalista Redondo */
+        /* Emblemas de Status */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -216,98 +300,148 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1>Guimara <span>Painel Admin</span></h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Ver Site</a></li>
-                    <li><a href="admin.html" style="color: var(--primary); font-weight: bold;">Gerenciar Obras</a></li>
-                </ul>
-            </nav>
+
+    <div id="loginScreen">
+        <div class="login-box">
+            <i class="fas fa-lock fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
+            <h2>Área Restrita</h2>
+            <p>Insira a senha de administrador para acessar o controle de obras.</p>
+            <input type="password" id="adminPassword" placeholder="••••" maxlength="8" onkeydown="if(event.key === 'Enter') verificarSenha()">
+            <button onclick="verificarSenha()">Entrar no Painel</button>
+            <div id="loginError" class="error-message">Senha incorreta! Tente novamente.</div>
         </div>
-    </header>
+    </div>
 
-    <section class="hero" style="min-height: 28vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1531834685032-c34bf0d84c77'); background-size: cover; background-position: center;">
-        <div class="hero-content">
-            <h1>Controle de Agendamentos</h1>
-            <p>Gerencie pedidos recebidos, altere o status das visitas e acompanhe o andamento das obras em tempo real.</p>
-        </div>
-    </section>
-
-    <section class="sobre" style="padding: 50px 0;">
-        <div class="container">
-            
-            <div class="admin-dashboard">
-                <div class="stat-card total">
-                    <h3 id="countTotal">0</h3>
-                    <p>Total de Pedidos</p>
-                    <i class="fas fa-folder-open card-icon"></i>
+    <div id="adminContent">
+        <header>
+            <div class="container">
+                <div class="logo">
+                    <h1>Guimara <span>Painel Admin</span></h1>
                 </div>
-                <div class="stat-card pendentes">
-                    <h3 id="countPendentes">0</h3>
-                    <p>Aguardando Visita</p>
-                    <i class="fas fa-clock card-icon"></i>
-                </div>
-                <div class="stat-card confirmados">
-                    <h3 id="countConfirmados">0</h3>
-                    <p>Visitas Agendadas</p>
-                    <i class="fas fa-calendar-check card-icon"></i>
-                </div>
-                <div class="stat-card concluidos">
-                    <h3 id="countConcluidos">0</h3>
-                    <p>Obras Concluídas</p>
-                    <i class="fas fa-check-circle card-icon"></i>
-                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Ver Site</a></li>
+                        <li><a href="admin.html" style="color: var(--primary); font-weight: bold;">Gerenciar Obras</a></li>
+                        <li><a href="#" onclick="fazerLogout()" style="color: #c62828;"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    </ul>
+                </nav>
             </div>
+        </header>
 
-            <div class="toolbar-admin">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="inputBusca" placeholder="Buscar por cliente, telefone ou serviço..." oninput="filtrarTabela()">
-                </div>
-                <div class="filter-buttons">
-                    <button class="btn-filter active" id="btnFiltroAll" onclick="definirFiltroStatus('Todos')">Todos</button>
-                    <button class="btn-filter" id="btnFiltroPendente" onclick="definirFiltroStatus('Pendente')">Aguardando Visita</button>
-                    <button class="btn-filter" id="btnFiltroConfirmado" onclick="definirFiltroStatus('Confirmado')">Agendadas</button>
-                    <button class="btn-filter" id="btnFiltroConcluido" onclick="definirFiltroStatus('Concluído')">Concluídas</button>
-                </div>
+        <section class="hero" style="min-height: 28vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1531834685032-c34bf0d84c77'); background-size: cover; background-position: center;">
+            <div class="hero-content">
+                <h1>Controle de Agendamentos</h1>
+                <p>Gerencie pedidos recebidos, altere o status das visitas e acompanhe o andamento das obras em tempo real.</p>
             </div>
+        </section>
 
-            <div class="table-container-style">
-                <div class="table-responsive">
-                    <table id="adminTable">
-                        <thead>
-                            <tr>
-                                <th>Cliente / Contato</th>
-                                <th>Serviço Solicitado</th>
-                                <th>Data Pretendida</th>
-                                <th>Local da Obra</th>
-                                <th>Status</th>
-                                <th>Ações Administrativas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
+        <section class="sobre" style="padding: 50px 0;">
+            <div class="container">
+                
+                <div class="admin-dashboard">
+                    <div class="stat-card total">
+                        <h3 id="countTotal">0</h3>
+                        <p>Total de Pedidos</p>
+                        <i class="fas fa-folder-open card-icon"></i>
+                    </div>
+                    <div class="stat-card pendentes">
+                        <h3 id="countPendentes">0</h3>
+                        <p>Aguardando Visita</p>
+                        <i class="fas fa-clock card-icon"></i>
+                    </div>
+                    <div class="stat-card confirmados">
+                        <h3 id="countConfirmados">0</h3>
+                        <p>Visitas Agendadas</p>
+                        <i class="fas fa-calendar-check card-icon"></i>
+                    </div>
+                    <div class="stat-card concluidos">
+                        <h3 id="countConcluidos">0</h3>
+                        <p>Obras Concluídas</p>
+                        <i class="fas fa-check-circle card-icon"></i>
+                    </div>
                 </div>
+
+                <div class="toolbar-admin">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="inputBusca" placeholder="Buscar por cliente, telefone ou serviço..." oninput="filtrarTabela()">
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="btn-filter active" id="btnFiltroAll" onclick="definirFiltroStatus('Todos')">Todos</button>
+                        <button class="btn-filter" id="btnFiltroPendente" onclick="definirFiltroStatus('Pendente')">Aguardando Visita</button>
+                        <button class="btn-filter" id="btnFiltroConfirmado" onclick="definirFiltroStatus('Confirmado')">Agendadas</button>
+                        <button class="btn-filter" id="btnFiltroConcluido" onclick="definirFiltroStatus('Concluído')">Concluídas</button>
+                    </div>
+                </div>
+
+                <div class="table-container-style">
+                    <div class="table-responsive">
+                        <table id="adminTable">
+                            <thead>
+                                <tr>
+                                    <th>Cliente / Contato</th>
+                                    <th>Serviço Solicitado</th>
+                                    <th>Data Pretendida</th>
+                                    <th>Local da Obra</th>
+                                    <th>Status</th>
+                                    <th>Ações Administrativas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
+        </section>
 
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Guimara Construção - Painel Interno de Controle Premium</p>
-        </div>
-    </footer>
+        <footer>
+            <div class="container">
+                <p>&copy; 2026 Guimara Construção - Painel Interno de Controle Premium</p>
+            </div>
+        </footer>
+    </div>
 
     <script>
         let listaAgendamentosGlobais = [];
         let statusFiltroAtual = 'Todos';
 
+        // Lógica de Autenticação baseada em LocalStorage
+        function verificarSessao() {
+            if (localStorage.getItem('adminAuthenticated') === 'true') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                carregarPainelAdmin();
+            }
+        }
+
+        function verificarSenha() {
+            const senhaDigitada = document.getElementById('adminPassword').value;
+            const erroTxt = document.getElementById('loginError');
+
+            if (senhaDigitada === '1234') {
+                erroTxt.style.display = 'none';
+                localStorage.setItem('adminAuthenticated', 'true');
+                document.getElementById('loginScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminContent').style.display = 'block';
+                    carregarPainelAdmin();
+                }, 400);
+            } else {
+                erroTxt.style.display = 'block';
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        function fazerLogout() {
+            localStorage.removeItem('adminAuthenticated');
+            window.location.reload();
+        }
+
+        // Requisições e manipulação de dados
         async function carregarPainelAdmin() {
             try {
                 const response = await fetch('/api/agendamentos');
@@ -356,12 +490,12 @@
             });
 
             if (dadosFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="no-data"><i class="fas fa-ghost" style="display:block; font-size:2rem; margin-bottom:10px; color:#ccc;"></i> Nenhum agendamento encontrado para estes filtros.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="no-data"><i class="fas fa-folder-open" style="display:block; font-size:2rem; margin-bottom:10px; color:#ccc;"></i> Nenhum registro correspondente encontrado.</td></tr>`;
                 return;
             }
 
             dadosFiltrados.forEach((item) => {
-                const dataFormatada = item.data.split('-').reverse().join('/');
+                const dataFormatada = item.data ? item.data.split('-').reverse().join('/') : '---';
                 
                 let badgeClass = 'badge-pendente';
                 let iconStatus = 'fa-clock';
@@ -376,7 +510,7 @@
                     </td>
                     <td>
                         <span style="font-weight:600; color: #333;">${item.servico}</span><br>
-                        <small style="color:#888; display:block; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.descricao}">${item.descricao || 'Sem observações adicionais'}</small>
+                        <small style="color:#888; display:block; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.descricao || ''}">${item.descricao || 'Sem observações adicionais'}</small>
                     </td>
                     <td><span style="font-weight: 500; color: #444;"><i class="far fa-calendar-alt" style="color: var(--primary); margin-right:6px;"></i>${dataFormatada}</span></td>
                     <td><span style="color:#555; font-size:0.9rem; font-weight: 500;">${item.endereco}</span></td>
@@ -416,7 +550,8 @@
             }
         }
 
-        window.onload = carregarPainelAdmin;
+        // Inicia validando se já está logado
+        window.onload = verificarSessao;
     </script>
 </body>
 </html>
