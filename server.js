@@ -63,10 +63,13 @@ let bancoFeedbacks = [
 // ------------------------------------------
 // ROTAS DE AGENDAMENTOS (PROJETO COMPLETO)
 // ------------------------------------------
+
+// Obter todos os agendamentos (usado pela tela do Admin para listar as obras)
 app.get('/api/agendamentos', (req, res) => {
     res.json(bancoAgendamentos);
 });
 
+// Buscar um agendamento específico por telefone (usado pelo cliente na consulta de status)
 app.get('/api/agendamentos/buscar', (req, res) => {
     const telefoneBusca = req.query.telefone;
     if (!telefoneBusca) return res.status(400).json({ error: "Telefone não informado." });
@@ -81,47 +84,58 @@ app.get('/api/agendamentos/buscar', (req, res) => {
     res.json(encontrado);
 });
 
+// Receber novos agendamentos enviados pelo formulário do cliente
 app.post('/api/agendamentos', (req, res) => {
     const { nome, telefone, endereco, data, servico, descricao } = req.body;
+    
     if (!nome || !telefone || !endereco || !data || !servico) {
         return res.status(400).json({ error: "Campos obrigatórios em falta." });
     }
+    
     const novoAgendamento = {
-        id: Date.now().toString(),
-        nome, telefone, endereco, data, servico, descricao: descricao || "", status: "Pendente"
+        id: Date.now().toString(), // Gera um ID único baseado no timestamp
+        nome, 
+        telefone, 
+        endereco, 
+        data, 
+        servico, 
+        descricao: descricao || "", 
+        status: "Pendente" // Todo agendamento entra inicialmente como Pendente
     };
-    bancoAgendamentos.push(novoAgendamento);
-    res.status(201).json({ message: "Sucesso!" });
+    
+    // Insere no início da lista para que o Admin veja o mais recente primeiro
+    bancoAgendamentos.unshift(novoAgendamento); 
+    res.status(201).json({ message: "Agendamento realizado com sucesso!", id: novoAgendamento.id });
 });
 
+// Atualizar status da obra (Aprovado, Confirmado, Concluído) via Admin
 app.put('/api/agendamentos/status', (req, res) => {
     const { id, status } = req.body;
     const agendamento = bancoAgendamentos.find(item => item.id === id);
     if (agendamento) {
         agendamento.status = status;
-        return res.json({ message: "Status atualizado!" });
+        return res.json({ message: "Status atualizado com sucesso!" });
     }
-    res.status(404).json({ error: "Não encontrado." });
+    res.status(404).json({ error: "Agendamento não encontrado." });
 });
 
+// Remover ou cancelar um agendamento via painel Admin
 app.delete('/api/agendamentos/:id', (req, res) => {
     const id = req.params.id;
     const indice = bancoAgendamentos.findIndex(item => item.id === id);
-    if (indice === -1) return res.status(404).json({ error: "Não encontrado." });
+    if (indice === -1) return res.status(404).json({ error: "Agendamento não encontrado." });
     bancoAgendamentos.splice(indice, 1);
-    res.json({ message: "Removido!" });
+    res.json({ message: "Agendamento removido com sucesso!" });
 });
 
 // ------------------------------------------
-// NOVAS ROTAS DE FEEDBACKS (Aba Clientes)
+// ROTAS DE FEEDBACKS (Aba Clientes)
 // ------------------------------------------
 
-// Obter todos os feedbacks para exibir na página
 app.get('/api/feedbacks', (req, res) => {
     res.json(bancoFeedbacks);
 });
 
-// Enviar um novo feedback através do formulário
 app.post('/api/feedbacks', (req, res) => {
     const { nome, cidade, mensagem } = req.body;
 
@@ -133,21 +147,32 @@ app.post('/api/feedbacks', (req, res) => {
         nome,
         cidade: cidade || "Capanema - PR",
         mensagem,
-        data: new Date().toISOString().split('T')[0] // Data atual no formato AAAA-MM-DD
+        data: new Date().toISOString().split('T')[0]
     };
 
-    bancoFeedbacks.unshift(novoFeedback); // Adiciona no início da lista para aparecer primeiro
+    bancoFeedbacks.unshift(novoFeedback);
     res.status(201).json({ message: "Feedback enviado com sucesso!" });
 });
 
-// Rota raiz para o site
+// ------------------------------------------
+// ROTAS DE RENDERIZAÇÃO DAS PÁGINAS (HTML)
+// ------------------------------------------
+
+// Rota raiz - Página Inicial do cliente
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Inicialização
+// Nova Rota Privada/Aba - Painel de Controle do Administrador
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+
+// Inicialização do Servidor Local
 app.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(`   Guimara Construção operacional em: http://localhost:${PORT}`);
+    console.log(` Guimara Construção operacional em: http://localhost:${PORT}`);
+    console.log(` Acesse o Painel do Administrador em: http://localhost:${PORT}/admin`);
     console.log(`====================================================`);
 });
