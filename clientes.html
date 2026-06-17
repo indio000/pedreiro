@@ -7,23 +7,24 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Estilos customizados para feedbacks dinâmicos baseados no design premium */
+        /* Estilos Customizados Premium para Feedbacks */
         .feedback-section {
-            padding: 80px 0;
+            padding: 90px 0;
             background-color: var(--light);
         }
         
         .section-intro {
             text-align: center;
             max-width: 700px;
-            margin: 0 auto 50px auto;
+            margin: 0 auto 60px auto;
         }
 
         .section-intro h2 {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             color: var(--dark);
             font-weight: 800;
             margin-bottom: 15px;
+            position: relative;
         }
 
         .section-intro h2::after {
@@ -36,140 +37,177 @@
             border-radius: 2px;
         }
 
+        .section-intro p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
         .feedbacks-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 30px;
-            margin-bottom: 60px;
+            margin-bottom: 70px;
         }
         
         .feedback-card {
             background: var(--white);
-            padding: 35px;
+            padding: 40px 35px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            border-left: 5px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            border-top: 4px solid var(--primary);
             position: relative;
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .feedback-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(230, 81, 0, 0.08);
         }
         
         .feedback-card p {
             font-style: italic;
             color: var(--gray);
-            margin-bottom: 20px;
-            line-height: 1.6;
+            margin-bottom: 25px;
+            line-height: 1.7;
             font-size: 1.05rem;
+            position: relative;
+            z-index: 2;
         }
         
+        .feedback-card .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
         .feedback-card strong {
             color: var(--dark);
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 700;
         }
         
         .feedback-card small {
-            display: block;
-            color: #888;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #777;
             margin-top: 6px;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
+        }
+
+        .feedback-card small i {
+            color: var(--primary);
+            font-size: 0.9rem;
         }
         
         .feedback-card .quote-icon {
             position: absolute;
-            bottom: 25px;
+            top: 25px;
             right: 25px;
-            font-size: 2.2rem;
-            color: rgba(230, 81, 0, 0.08);
+            font-size: 2.5rem;
+            color: rgba(230, 81, 0, 0.05);
+            z-index: 1;
         }
 
-        /* Container do Formulário */
+        /* Container do Formulário Premium */
         .form-feedback-container {
             background: var(--white);
-            padding: 45px 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            max-width: 650px;
+            padding: 50px 45px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+            max-width: 680px;
             margin: 0 auto;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.01);
         }
         
         .form-feedback-container h3 {
             color: var(--dark);
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
         
         .form-group label {
             display: block;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 9px;
             color: var(--dark);
             font-size: 0.95rem;
         }
         
         .form-group input, .form-group textarea {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-family: inherit;
             font-size: 1rem;
-            background-color: #fafafa;
+            background-color: #f8fafc;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
+            color: var(--dark);
         }
         
         .form-group textarea {
             resize: vertical;
-            min-height: 130px;
+            min-height: 140px;
         }
         
         .form-group input:focus, .form-group textarea:focus {
             border-color: var(--primary);
             background-color: var(--white);
-            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.12);
         }
 
         .no-feedbacks {
             text-align: center;
             grid-column: 1 / -1;
-            padding: 40px;
-            color: #888;
+            padding: 50px;
+            color: #718096;
             font-style: italic;
             font-size: 1.1rem;
+            background: rgba(0,0,0,0.01);
+            border-radius: 12px;
+            border: 1px dashed #e2e8f0;
         }
 
-        /* Estilo do botão adaptado para usar as variáveis globais (--primary e --primary-hover) */
         .btn-enviar-feedback {
             width: 100%;
             border: none;
-            padding: 15px;
+            padding: 16px;
             font-size: 1rem;
             cursor: pointer;
             font-weight: 700;
             border-radius: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
             background-color: var(--primary);
             color: var(--white);
-            transition: background-color 0.3s ease;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(230, 81, 0, 0.2);
         }
 
         .btn-enviar-feedback:hover {
             background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(230, 81, 0, 0.3);
+        }
+
+        .btn-enviar-feedback:active {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -210,10 +248,11 @@
             </div>
             
             <div class="feedbacks-grid" id="feedbacksContainer">
-                </div>
+                <div class="no-feedbacks"><i class="fas fa-spinner fa-spin"></i> Carregando depoimentos dos clientes...</div>
+            </div>
 
             <div class="form-feedback-container">
-                <h3><i class="fas fa-comment-dots" style="color: var(--primary); margin-right: 5px;"></i> Deixe a sua Opinião</h3>
+                <h3><i class="fas fa-comment-dots" style="color: var(--primary);"></i> Deixe a sua Opinião</h3>
                 <form id="feedbackForm">
                     <div class="form-group">
                         <label for="nome">Seu Nome Completo:</label>
@@ -254,7 +293,7 @@
                 }
                 
                 const feedbacks = await response.json();
-                container.innerHTML = ''; // Limpa o esqueleto antes de carregar
+                container.innerHTML = ''; // Limpa antes de carregar os cards
 
                 if (feedbacks.length === 0) {
                     container.innerHTML = '<div class="no-feedbacks">Nenhum depoimento publicado ainda. Seja o primeiro a deixar sua avaliação abaixo!</div>';
@@ -262,24 +301,23 @@
                 }
 
                 feedbacks.forEach(item => {
-                    // Formata a data se houver (AAAA-MM-DD -> DD/MM/AAAA)
                     const dataFormatada = item.data ? item.data.split('-').reverse().join('/') : '';
 
                     const card = document.createElement('div');
                     card.className = 'feedback-card';
                     card.innerHTML = `
+                        <i class="fas fa-quote-left quote-icon"></i>
                         <p>"${item.mensagem}"</p>
-                        <div>
+                        <div class="author-info">
                             <strong>- ${item.nome}</strong>
                             <small><i class="fas fa-map-marker-alt"></i> ${item.cidade} ${dataFormatada ? `• ${dataFormatada}` : ''}</small>
                         </div>
-                        <i class="fas fa-quote-right quote-icon"></i>
                     `;
                     container.appendChild(card);
                 });
             } catch (error) {
                 console.error("Erro ao buscar feedbacks no banco:", error);
-                container.innerHTML = '<div class="no-feedbacks" style="color: #c62828;"><i class="fas fa-exclamation-triangle"></i> Não foi possível carregar as avaliações no momento.</div>';
+                container.innerHTML = '<div class="no-feedbacks" style="color: #c62828; border-color: #ef9a9a;"><i class="fas fa-exclamation-triangle"></i> Não foi possível carregar as avaliações no momento.</div>';
             }
         }
 
@@ -289,20 +327,20 @@
 
             const nome = document.getElementById('nome').value.trim();
             const cidade = document.getElementById('cidade').value.trim();
-            const mensagem = document.getElementById('mensagem').value.trim();
+            const mensaje = document.getElementById('mensagem').value.trim();
 
             try {
                 const response = await fetch('/api/feedbacks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome, cidade, mensagem })
+                    body: JSON.stringify({ nome, cidade, mensagem: mensaje })
                 });
 
                 if (response.ok) {
                     alert('Muito obrigado pelo seu feedback! Ele foi publicado com sucesso.');
-                    document.getElementById('feedbackForm').reset(); // Limpa os campos de texto
-                    document.getElementById('cidade').value = "Capanema - PR"; // Restaura o valor padrão
-                    carregarFeedbacks(); // Atualiza a lista na tela de forma assíncrona imediata
+                    document.getElementById('feedbackForm').reset(); 
+                    document.getElementById('cidade').value = "Capanema - PR"; 
+                    carregarFeedbacks(); 
                 } else {
                     alert('Ocorreu um erro no servidor ao tentar processar o envio. Tente novamente.');
                 }
