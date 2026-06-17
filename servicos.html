@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nossos Serviços - Guimara Construção</title>
+    <title>Clientes & Depoimentos - Guimara Construção</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Estilos Exclusivos para a Página de Serviços Premium */
-        .services-intro {
+        /* Estilos customizados para feedbacks dinâmicos baseados no design premium */
+        .feedback-section {
+            padding: 80px 0;
+            background-color: var(--light);
+        }
+        
+        .section-intro {
             text-align: center;
             max-width: 700px;
             margin: 0 auto 50px auto;
         }
 
-        .services-intro h2 {
-            font-size: 2.3rem;
+        .section-intro h2 {
+            font-size: 2.2rem;
             color: var(--dark);
             font-weight: 800;
             margin-bottom: 15px;
-            position: relative;
         }
 
-        .services-intro h2::after {
+        .section-intro h2::after {
             content: '';
             display: block;
             width: 60px;
@@ -32,96 +36,140 @@
             border-radius: 2px;
         }
 
-        .services-intro p {
-            color: var(--gray);
-            font-size: 1.1rem;
-        }
-
-        /* Customização Avançada dos Cards */
-        .services-grid {
+        .feedbacks-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
+            margin-bottom: 60px;
         }
-
-        .service-card {
+        
+        .feedback-card {
             background: var(--white);
-            padding: 45px 35px;
+            padding: 35px;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            border-top: 4px solid var(--dark);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-left: 5px solid var(--primary);
+            position: relative;
+            transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;
         }
 
-        .service-card:hover {
-            transform: translateY(-8px);
-            border-top-color: var(--primary);
-            box-shadow: 0 15px 35px rgba(230, 81, 0, 0.12);
+        .feedback-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feedback-card p {
+            font-style: italic;
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+        
+        .feedback-card strong {
+            color: var(--dark);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        
+        .feedback-card small {
+            display: block;
+            color: #888;
+            margin-top: 6px;
+            font-size: 0.85rem;
+        }
+        
+        .feedback-card .quote-icon {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            font-size: 2.2rem;
+            color: rgba(230, 81, 0, 0.08);
         }
 
-        .card-icon-box {
-            background-color: rgba(230, 81, 0, 0.06);
-            width: 70px;
-            height: 70px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Container do Formulário */
+        .form-feedback-container {
+            background: var(--white);
+            padding: 45px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 650px;
+            margin: 0 auto;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+        
+        .form-feedback-container h3 {
+            color: var(--dark);
             margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            background-color: #fafafa;
+            outline: none;
             transition: all 0.3s ease;
         }
-
-        .service-card:hover .card-icon-box {
-            background-color: var(--primary);
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
         }
 
-        .service-card:hover .card-icon-box i {
-            color: var(--white) !important;
-            transform: scale(1.1);
+        .no-feedbacks {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            color: #888;
+            font-style: italic;
+            font-size: 1.1rem;
         }
 
-        .service-card h3 {
-            font-size: 1.35rem;
-            color: var(--dark);
-            margin-bottom: 12px;
+        /* Estilo do botão adaptado para usar as variáveis globais (--primary e --primary-hover) */
+        .btn-enviar-feedback {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            font-size: 1rem;
+            cursor: pointer;
             font-weight: 700;
-        }
-
-        .service-card p {
-            font-size: 0.98rem;
-            color: var(--gray);
-            line-height: 1.6;
-            margin-bottom: 25px;
-            flex-grow: 1;
-        }
-
-        .btn-card-action {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            border-radius: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: color 0.2s ease;
+            background-color: var(--primary);
+            color: var(--white);
+            transition: background-color 0.3s ease;
         }
 
-        .btn-card-action i {
-            transition: transform 0.2s ease;
-        }
-
-        .service-card:hover .btn-card-action {
-            color: var(--primary-hover);
-        }
-
-        .service-card:hover .btn-card-action i {
-            transform: translateX(5px);
+        .btn-enviar-feedback:hover {
+            background-color: var(--primary-hover);
         }
     </style>
 </head>
@@ -134,10 +182,9 @@
             <nav>
                 <ul>
                     <li><a href="index.html">Início</a></li>
-                    <li><a href="servicos.html" style="color: var(--primary); font-weight: bold;">Serviços</a></li>
-                    <li><a href="clientes.html">Clientes</a></li>
-                    <li><a href="agendamento.html">Agendar Visita</a></li>
-                    <li><a href="status.html">Status do Pedido</a></li>
+                    <li><a href="servicos.html">Serviços</a></li>
+                    <li><a href="clientes.html" style="color: var(--primary); font-weight: bold;">Clientes</a></li>
+                    <li><a href="cadastro.html">Cadastro</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
             </nav>
@@ -147,73 +194,43 @@
         </div>
     </header>
 
-    <section class="hero" style="min-height: 35vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1504307651254-35680f356dfd'); background-size: cover; background-position: center;">
+    <section class="hero" style="min-height: 35vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1541888941-6e5c4e8f7a5f'); background-size: cover; background-position: center;">
         <div class="hero-content">
-            <h1>Nossos Serviços</h1>
-            <p>Do Alicerce ao Acabamento: Soluções completas com excelência, pontualidade e segurança para sua obra.</p>
+            <h1>Clientes & Depoimentos</h1>
+            <p>A satisfação e o sorriso de quem constrói com confiança, transparência e alta qualidade.</p>
         </div>
     </section>
 
-    <section class="sobre bg-light" style="padding: 80px 0;">
+    <section class="feedback-section">
         <div class="container">
             
-            <div class="services-intro">
-                <h2>Especialidades Profissionais</h2>
-                <p>Oferecemos mão de obra qualificada em Capanema-PR e região para transformar seus planos arquitetônicos em realidade sólida.</p>
+            <div class="section-intro">
+                <h2>O que dizem sobre nosso trabalho</h2>
+                <p>Veja a opinião sincera de quem contratou a Guimara Construção para realizar suas reformas e edificações estruturais.</p>
             </div>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <div>
-                        <div class="card-icon-box">
-                            <i class="fas fa-hammer fa-2x" style="color:var(--primary); transition: all 0.3s ease;"></i>
-                        </div>
-                        <h3>Alvenaria e Construção</h3>
-                        <p>Construção estrutural completa a partir da fundação. Assentamento de tijolos, levantamento de muros, montagem de lajes de concreto e vigas estruturais com segurança milimétrica.</p>
-                    </div>
-                    <a href="https://wa.me/5546999011578?text=Olá! Gostaria de um orçamento sobre Alvenaria e Construção." target="_blank" class="btn-card-action">
-                        Solicitar Orçamento <i class="fas fa-arrow-right"></i>
-                    </a>
+            
+            <div class="feedbacks-grid" id="feedbacksContainer">
                 </div>
 
-                <div class="service-card">
-                    <div>
-                        <div class="card-icon-box">
-                            <i class="fas fa-tools fa-2x" style="color:var(--primary); transition: all 0.3s ease;"></i>
-                        </div>
-                        <h3>Reformas Residenciais</h3>
-                        <p>Renovação e modernização interna ou externa. Demolição controlada, redistribuição de cômodos, reparos estruturais e repaginação total de cozinhas, banheiros e fachadas comerciais.</p>
+            <div class="form-feedback-container">
+                <h3><i class="fas fa-comment-dots" style="color: var(--primary); margin-right: 5px;"></i> Deixe a sua Opinião</h3>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="nome">Seu Nome Completo:</label>
+                        <input type="text" id="nome" placeholder="Ex: João da Silva" required>
                     </div>
-                    <a href="https://wa.me/5546999011578?text=Olá! Gostaria de um orçamento sobre Reformas Residenciais." target="_blank" class="btn-card-action">
-                        Solicitar Orçamento <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <div class="service-card">
-                    <div>
-                        <div class="card-icon-box">
-                            <i class="fas fa-layer-group fa-2x" style="color:var(--primary); transition: all 0.3s ease;"></i>
-                        </div>
-                        <h3>Pisos e Revestimentos</h3>
-                        <p>Instalação de alta precisão com paginações limpas. Aplicação profissional de porcelanatos de grandes formatos, cerâmicas, azulejos em áreas molhadas, pastilhas e pisos frios em geral.</p>
+                    <div class="form-group">
+                        <label for="cidade">Sua Cidade / Estado:</label>
+                        <input type="text" id="cidade" placeholder="Ex: Capanema - PR" value="Capanema - PR" required>
                     </div>
-                    <a href="https://wa.me/5546999011578?text=Olá! Gostaria de um orçamento sobre Pisos e Revestimentos." target="_blank" class="btn-card-action">
-                        Solicitar Orçamento <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <div class="service-card">
-                    <div>
-                        <div class="card-icon-box">
-                            <i class="fas fa-paint-roller fa-2x" style="color:var(--primary); transition: all 0.3s ease;"></i>
-                        </div>
-                        <h3>Acabamentos Finos</h3>
-                        <p>Os detalhes que valorizam seu imóvel. Serviços de aplicação de massa corrida, pinturas premium fosco ou acetinado, instalação de sancas e tetos de gesso moldado com iluminação integrada.</p>
+                    <div class="form-group">
+                        <label for="mensagem">Sua Opinião sobre o Serviço:</label>
+                        <textarea id="mensagem" placeholder="Conte em detalhes como foi a sua experiência com a nossa equipe, atendimento e acabamento..." required></textarea>
                     </div>
-                    <a href="https://wa.me/5546999011578?text=Olá! Gostaria de um orçamento sobre Acabamentos Finos." target="_blank" class="btn-card-action">
-                        Solicitar Orçamento <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
+                    <button type="submit" class="btn-enviar-feedback">
+                        Enviar Minha Avaliação
+                    </button>
+                </form>
             </div>
 
         </div>
@@ -224,5 +241,79 @@
             <p>&copy; 2026 Guimara Construção - Capanema, PR</p>
         </div>
     </footer>
+
+    <script>
+        // Função para carregar os feedbacks do servidor backend
+        async function carregarFeedbacks() {
+            const container = document.getElementById('feedbacksContainer');
+            try {
+                const response = await fetch('/api/feedbacks');
+                
+                if (!response.ok) {
+                    throw new Error('Falha na resposta do servidor');
+                }
+                
+                const feedbacks = await response.json();
+                container.innerHTML = ''; // Limpa o esqueleto antes de carregar
+
+                if (feedbacks.length === 0) {
+                    container.innerHTML = '<div class="no-feedbacks">Nenhum depoimento publicado ainda. Seja o primeiro a deixar sua avaliação abaixo!</div>';
+                    return;
+                }
+
+                feedbacks.forEach(item => {
+                    // Formata a data se houver (AAAA-MM-DD -> DD/MM/AAAA)
+                    const dataFormatada = item.data ? item.data.split('-').reverse().join('/') : '';
+
+                    const card = document.createElement('div');
+                    card.className = 'feedback-card';
+                    card.innerHTML = `
+                        <p>"${item.mensagem}"</p>
+                        <div>
+                            <strong>- ${item.nome}</strong>
+                            <small><i class="fas fa-map-marker-alt"></i> ${item.cidade} ${dataFormatada ? `• ${dataFormatada}` : ''}</small>
+                        </div>
+                        <i class="fas fa-quote-right quote-icon"></i>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Erro ao buscar feedbacks no banco:", error);
+                container.innerHTML = '<div class="no-feedbacks" style="color: #c62828;"><i class="fas fa-exclamation-triangle"></i> Não foi possível carregar as avaliações no momento.</div>';
+            }
+        }
+
+        // Evento de envio do formulário de feedback para a API
+        document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const cidade = document.getElementById('cidade').value.trim();
+            const mensagem = document.getElementById('mensagem').value.trim();
+
+            try {
+                const response = await fetch('/api/feedbacks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, cidade, mensagem })
+                });
+
+                if (response.ok) {
+                    alert('Muito obrigado pelo seu feedback! Ele foi publicado com sucesso.');
+                    document.getElementById('feedbackForm').reset(); // Limpa os campos de texto
+                    document.getElementById('cidade').value = "Capanema - PR"; // Restaura o valor padrão
+                    carregarFeedbacks(); // Atualiza a lista na tela de forma assíncrona imediata
+                } else {
+                    alert('Ocorreu um erro no servidor ao tentar processar o envio. Tente novamente.');
+                }
+            } catch (error) {
+                console.error("Erro na requisição POST:", error);
+                alert('Erro de conexão! Verifique se o servidor backend está online.');
+            }
+        });
+
+        // Executa ao carregar a página pela primeira vez
+        window.onload = carregarFeedbacks;
+    </script>
 </body>
 </html>
