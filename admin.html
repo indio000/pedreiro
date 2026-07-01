@@ -3,555 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Guimara Construção</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* Variáveis de Cores Exclusivas para o Layout Premium do Admin */
-        :root {
-            --admin-bg: #f4f6f9;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            --tr-hover: rgba(230, 81, 0, 0.03);
-        }
-
-        body {
-            background-color: var(--admin-bg);
-        }
-
-        /* Tela de Bloqueio por Senha */
-        #loginScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
-            transition: all 0.5s ease;
-        }
-
-        .login-box {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .login-box h2 {
-            color: var(--dark);
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .login-box p {
-            color: #777;
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-
-        .login-box input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            text-align: center;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .login-box input:focus {
-            border-color: var(--primary);
-        }
-
-        .login-box button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .login-box button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .error-message {
-            color: #c62828;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            font-weight: 600;
-            display: none;
-        }
-
-        /* Conteúdo principal inicialmente oculto por segurança */
-        #adminContent {
-            display: none;
-        }
-
-        /* Dashboard de Indicadores Layout Moderno */
-        .admin-dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .stat-card {
-            background: var(--white);
-            padding: 30px 25px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid rgba(0,0,0,0.03);
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-        .stat-card h3 { 
-            font-size: 2.8rem; 
-            color: var(--dark); 
-            margin-bottom: 5px; 
-            font-weight: 700;
-            line-height: 1;
-        }
-        .stat-card p { 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-            color: #888; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-        }
-        .stat-card .card-icon {
-            position: absolute;
-            right: 20px;
-            bottom: 15px;
-            font-size: 3.5rem;
-            opacity: 0.08;
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover .card-icon {
-            opacity: 0.15;
-            transform: scale(1.1);
-        }
-        
-        /* Customização de cores por Card */
-        .stat-card.total { border-bottom: 4px solid var(--dark); }
-        .stat-card.pendentes { border-bottom: 4px solid #ef6c00; }
-        .stat-card.pendentes h3 { color: #ef6c00; }
-        .stat-card.confirmados { border-bottom: 4px solid #2e7d32; }
-        .stat-card.confirmados h3 { color: #2e7d32; }
-        .stat-card.concluidos { border-bottom: 4px solid #1565c0; }
-        .stat-card.concluidos h3 { color: #1565c0; }
-
-        /* Barra de Ferramentas: Pesquisa e Filtros */
-        .toolbar-admin {
-            background: var(--white);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        .search-box {
-            position: relative;
-            flex: 1;
-            min-width: 300px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 14px 16px 14px 45px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-            background-color: #fafafa;
-            transition: all 0.3s ease;
-        }
-        .search-box input:focus {
-            border-color: var(--primary);
-            background-color: var(--white);
-            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
-        }
-        .search-box i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 1.1rem;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .btn-filter {
-            padding: 12px 20px;
-            border: 1px solid #e0e0e0;
-            background: var(--white);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--gray);
-            transition: all 0.2s ease;
-        }
-        .btn-filter:hover, .btn-filter.active {
-            background-color: var(--dark);
-            color: var(--white);
-            border-color: var(--dark);
-        }
-
-        /* Layout da Tabela Customizado */
-        .table-container-style {
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1000px; }
-        th { 
-            background-color: #1a1a1a; 
-            color: #fff; 
-            padding: 18px 24px;
-            font-weight: 600; 
-            text-transform: uppercase; 
-            font-size: 0.8rem; 
-            letter-spacing: 1px;
-        }
-        td { padding: 20px 24px; border-bottom: 1px solid #f1f1f1; font-size: 0.95rem; vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background-color: var(--tr-hover); }
-
-        /* Emblemas de Status */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .badge-pendente { background-color: #fff3e0; color: #ef6c00; }
-        .badge-confirmado { background-color: #e8f5e9; color: #2e7d32; }
-        .badge-concluido { background-color: #e3f2fd; color: #1565c0; }
-
-        /* Ações Administrativas Dinâmicas */
-        .btn-actions { display: flex; gap: 8px; }
-        .btn-action {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            color: var(--white);
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-        .btn-approve { background-color: #2e7d32; }
-        .btn-approve:hover { background-color: #1b5e20; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(46,125,50,0.2); }
-        .btn-finish { background-color: #1565c0; }
-        .btn-finish:hover { background-color: #0d47a1; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(21,101,192,0.2); }
-        .btn-delete { background-color: #f5f5f5; color: #c62828; border: 1px solid #e0e0e0; }
-        .btn-delete:hover { background-color: #c62828; color: white; border-color: #c62828; transform: translateY(-1px); }
-
-        .no-data {
-            text-align: center;
-            padding: 50px !important;
-            color: #999;
-            font-size: 1.1rem;
-            font-style: italic;
-        }
-    </style>
+    <title>Painel Admin - Guimara</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-    <div id="loginScreen">
-        <div class="login-box">
-            <i class="fas fa-lock fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
-            <h2>Área Restrita</h2>
-            <p>Insira a senha de administrador para acessar o controle de obras.</p>
-            <input type="password" id="adminPassword" placeholder="••••" maxlength="8" onkeydown="if(event.key === 'Enter') verificarSenha()">
-            <button onclick="verificarSenha()">Entrar no Painel</button>
-            <div id="loginError" class="error-message">Senha incorreta! Tente novamente.</div>
+    <header class="bg-slate-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench text-amber-500"></i> Painel de Controle - Obras</h1>
+        <a href="/" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-slate-300">Sair do Painel</a>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-slate-900">Gerenciar Agendamentos e Pedidos</h2>
+                <button onclick="carregarAgendamentos()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded font-medium"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 uppercase font-semibold text-xs tracking-wider border-b">
+                            <th class="p-4">Cliente / Contato</th>
+                            <th class="p-4">Serviço / Detalhes</th>
+                            <th class="p-4">Data / Local</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCorpo" class="divide-y divide-slate-100">
+                        </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
-    <div id="adminContent">
-        <header>
-            <div class="container">
-                <div class="logo">
-                    <h1>Guimara <span>Painel Admin</span></h1>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="index.html">Ver Site</a></li>
-                        <li><a href="admin.html" style="color: var(--primary); font-weight: bold;">Gerenciar Obras</a></li>
-                        <li><a href="#" onclick="fazerLogout()" style="color: #c62828;"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </header>
-
-        <section class="hero" style="min-height: 28vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1531834685032-c34bf0d84c77'); background-size: cover; background-position: center;">
-            <div class="hero-content">
-                <h1>Controle de Agendamentos</h1>
-                <p>Gerencie pedidos recebidos, altere o status das visitas e acompanhe o andamento das obras em tempo real.</p>
-            </div>
-        </section>
-
-        <section class="sobre" style="padding: 50px 0;">
-            <div class="container">
-                
-                <div class="admin-dashboard">
-                    <div class="stat-card total">
-                        <h3 id="countTotal">0</h3>
-                        <p>Total de Pedidos</p>
-                        <i class="fas fa-folder-open card-icon"></i>
-                    </div>
-                    <div class="stat-card pendentes">
-                        <h3 id="countPendentes">0</h3>
-                        <p>Aguardando Visita</p>
-                        <i class="fas fa-clock card-icon"></i>
-                    </div>
-                    <div class="stat-card confirmados">
-                        <h3 id="countConfirmados">0</h3>
-                        <p>Visitas Agendadas</p>
-                        <i class="fas fa-calendar-check card-icon"></i>
-                    </div>
-                    <div class="stat-card concluidos">
-                        <h3 id="countConcluidos">0</h3>
-                        <p>Obras Concluídas</p>
-                        <i class="fas fa-check-circle card-icon"></i>
-                    </div>
-                </div>
-
-                <div class="toolbar-admin">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="inputBusca" placeholder="Buscar por cliente, telefone ou serviço..." oninput="filtrarTabela()">
-                    </div>
-                    <div class="filter-buttons">
-                        <button class="btn-filter active" id="btnFiltroAll" onclick="definirFiltroStatus('Todos')">Todos</button>
-                        <button class="btn-filter" id="btnFiltroPendente" onclick="definirFiltroStatus('Pendente')">Aguardando Visita</button>
-                        <button class="btn-filter" id="btnFiltroConfirmado" onclick="definirFiltroStatus('Confirmado')">Agendadas</button>
-                        <button class="btn-filter" id="btnFiltroConcluido" onclick="definirFiltroStatus('Concluído')">Concluídas</button>
-                    </div>
-                </div>
-
-                <div class="table-container-style">
-                    <div class="table-responsive">
-                        <table id="adminTable">
-                            <thead>
-                                <tr>
-                                    <th>Cliente / Contato</th>
-                                    <th>Serviço Solicitado</th>
-                                    <th>Data Pretendida</th>
-                                    <th>Local da Obra</th>
-                                    <th>Status</th>
-                                    <th>Ações Administrativas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <footer>
-            <div class="container">
-                <p>&copy; 2026 Guimara Construção - Painel Interno de Controle Premium</p>
-            </div>
-        </footer>
-    </div>
+    </main>
 
     <script>
-        let listaAgendamentosGlobais = [];
-        let statusFiltroAtual = 'Todos';
-
-        // Lógica de Autenticação baseada em LocalStorage
-        function verificarSessao() {
-            if (localStorage.getItem('adminAuthenticated') === 'true') {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
-                carregarPainelAdmin();
-            }
-        }
-
-        function verificarSenha() {
-            const senhaDigitada = document.getElementById('adminPassword').value;
-            const erroTxt = document.getElementById('loginError');
-
-            if (senhaDigitada === '1234') {
-                erroTxt.style.display = 'none';
-                localStorage.setItem('adminAuthenticated', 'true');
-                document.getElementById('loginScreen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('adminContent').style.display = 'block';
-                    carregarPainelAdmin();
-                }, 400);
-            } else {
-                erroTxt.style.display = 'block';
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminPassword').focus();
-            }
-        }
-
-        function fazerLogout() {
-            localStorage.removeItem('adminAuthenticated');
-            window.location.reload();
-        }
-
-        // Requisições e manipulação de dados
-        async function carregarPainelAdmin() {
+        async function carregarAgendamentos() {
             try {
-                const response = await fetch('/api/agendamentos');
-                listaAgendamentosGlobais = await response.json();
-                
-                atualizarContadoresCards(listaAgendamentosGlobais);
-                filtrarTabela();
-            } catch (error) {
-                console.error('Erro ao carregar o painel administrativo:', error);
-            }
-        }
+                const res = await fetch('/api/agendamentos');
+                const agendamentos = await res.json();
+                const tbody = document.getElementById('tabelaCorpo');
+                tbody.innerHTML = '';
 
-        function atualizarContadoresCards(dados) {
-            document.getElementById('countTotal').innerText = dados.length;
-            document.getElementById('countPendentes').innerText = dados.filter(item => item.status === 'Pendente').length;
-            document.getElementById('countConfirmados').innerText = dados.filter(item => item.status === 'Confirmado').length;
-            document.getElementById('countConcluidos').innerText = dados.filter(item => item.status === 'Concluído' || item.status === 'Concluido').length;
-        }
-
-        function definirFiltroStatus(status) {
-            statusFiltroAtual = status;
-            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
-            if (status === 'Todos') document.getElementById('btnFiltroAll').classList.add('active');
-            if (status === 'Pendente') document.getElementById('btnFiltroPendente').classList.add('active');
-            if (status === 'Confirmado') document.getElementById('btnFiltroConfirmado').classList.add('active');
-            if (status === 'Concluído') document.getElementById('btnFiltroConcluido').classList.add('active');
-            filtrarTabela();
-        }
-
-        function filtrarTabela() {
-            const textoBusca = document.getElementById('inputBusca').value.toLowerCase();
-            const tbody = document.querySelector('#adminTable tbody');
-            tbody.innerHTML = '';
-
-            const dadosFiltrados = listaAgendamentosGlobais.filter(item => {
-                const atendeStatus = (statusFiltroAtual === 'Todos') || 
-                                     (statusFiltroAtual === 'Concluído' && (item.status === 'Concluído' || item.status === 'Concluido')) ||
-                                     (item.status === statusFiltroAtual);
-                
-                const atendeBusca = item.nome.toLowerCase().includes(textoBusca) || 
-                                    item.telefone.toLowerCase().includes(textoBusca) || 
-                                    item.servico.toLowerCase().includes(textoBusca) || 
-                                    item.endereco.toLowerCase().includes(textoBusca);
-
-                return atendeStatus && atendeBusca;
-            });
-
-            if (dadosFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="no-data"><i class="fas fa-folder-open" style="display:block; font-size:2rem; margin-bottom:10px; color:#ccc;"></i> Nenhum registro correspondente encontrado.</td></tr>`;
-                return;
-            }
-
-            dadosFiltrados.forEach((item) => {
-                const dataFormatada = item.data ? item.data.split('-').reverse().join('/') : '---';
-                
-                let badgeClass = 'badge-pendente';
-                let iconStatus = 'fa-clock';
-                if (item.status === 'Confirmado') { badgeClass = 'badge-confirmado'; iconStatus = 'fa-calendar-check'; }
-                if (item.status === 'Concluído' || item.status === 'Concluido') { badgeClass = 'badge-concluido'; iconStatus = 'fa-check-circle'; }
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <strong style="color: #222; font-size: 1rem;">${item.nome}</strong><br>
-                        <small style="color:#666; font-weight: 500; margin-top: 3px; display:inline-block;"><i class="fab fa-whatsapp" style="color: #25D366; margin-right: 2px;"></i> ${item.telefone}</small>
-                    </td>
-                    <td>
-                        <span style="font-weight:600; color: #333;">${item.servico}</span><br>
-                        <small style="color:#888; display:block; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.descricao || ''}">${item.descricao || 'Sem observações adicionais'}</small>
-                    </td>
-                    <td><span style="font-weight: 500; color: #444;"><i class="far fa-calendar-alt" style="color: var(--primary); margin-right:6px;"></i>${dataFormatada}</span></td>
-                    <td><span style="color:#555; font-size:0.9rem; font-weight: 500;">${item.endereco}</span></td>
-                    <td><span class="status-badge ${badgeClass}"><i class="fas ${iconStatus}"></i> ${item.status}</span></td>
-                    <td>
-                        <div class="btn-actions">
-                            ${item.status === 'Pendente' ? `<button class="btn-action btn-approve" onclick="alterarStatus('${item.id}', 'Confirmado')"><i class="fas fa-check"></i> Confirmar</button>` : ''}
-                            ${item.status === 'Confirmado' ? `<button class="btn-action btn-finish" onclick="alterarStatus('${item.id}', 'Concluído')"><i class="fas fa-flag-checkered"></i> Concluir</button>` : ''}
-                            <button class="btn-action btn-delete" onclick="deletarAgendamento('${item.id}')" title="Excluir Registro"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function alterarStatus(id, novoStatus) {
-            try {
-                const response = await fetch('/api/agendamentos/status', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, status: novoStatus })
+                agendamentos.forEach(item => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-4">
+                                <div class="font-bold text-slate-900">${item.nome}</div>
+                                <div class="text-xs text-gray-500">${item.telefone}</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium text-amber-700">${item.servico}</div>
+                                <div class="text-xs text-gray-500 max-w-xs truncate">${item.descricao || 'Sem descrição.'}</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium">${item.data}</div>
+                                <div class="text-xs text-gray-500 max-w-xs truncate">${item.endereco}</div>
+                            </td>
+                            <td class="p-4">
+                                <select onchange="atualizarStatus('${item.id}', this.value)" class="text-xs px-2 py-1 rounded font-bold uppercase ${item.status === 'Confirmado' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                    <option value="Pendente" ${item.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                                    <option value="Confirmado" ${item.status === 'Confirmado' ? 'selected' : ''}>Confirmado</option>
+                                    <option value="Concluído" ${item.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                                </select>
+                            </td>
+                            <td class="p-4 text-center">
+                                <button onclick="deletarAgendamento('${item.id}')" class="text-red-500 hover:text-red-700 text-sm p-1"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
                 });
-                if (response.ok) carregarPainelAdmin();
-            } catch (error) {
-                console.error('Erro de conexão:', error);
-            }
+            } catch(e) { console.error(e); }
+        }
+
+        async function atualizarStatus(id, novoStatus) {
+            await fetch('/api/agendamentos/status', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: novoStatus })
+            });
+            carregarAgendamentos();
         }
 
         async function deletarAgendamento(id) {
-            if (!confirm('Deseja mesmo remover permanentemente este agendamento do painel?')) return;
-            try {
-                const response = await fetch(`/api/agendamentos/${id}`, { method: 'DELETE' });
-                if (response.ok) carregarPainelAdmin();
-            } catch (error) {
-                console.error('Erro ao deletar:', error);
-            }
+            if(!confirm("Deseja realmente remover esta solicitação?")) return;
+            await fetch(`/api/agendamentos/${id}`, { method: 'DELETE' });
+            carregarAgendamentos();
         }
 
-        // Inicia validando se já está logado
-        window.onload = verificarSessao;
+        carregarAgendamentos();
     </script>
 </body>
 </html>
