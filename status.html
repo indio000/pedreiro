@@ -3,379 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status do Pedido - Guimara Construção</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* Container Customizado do Formulário */
-        .search-card {
-            background: var(--white);
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.02);
-            margin-bottom: 30px;
-        }
-
-        .input-group-custom {
-            display: flex;
-            gap: 12px;
-            position: relative;
-            align-items: center;
-        }
-
-        .input-group-custom i.fa-phone-alt {
-            position: absolute;
-            left: 16px;
-            color: #999;
-            font-size: 1.05rem;
-        }
-
-        .input-group-custom input {
-            width: 100%;
-            padding: 14px 16px 14px 45px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-            background-color: #fafafa;
-            transition: all 0.3s ease;
-        }
-
-        .input-group-custom input:focus {
-            border-color: var(--primary);
-            background-color: var(--white);
-            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
-        }
-
-        .btn-search-trigger {
-            padding: 0 24px;
-            height: 50px;
-            background-color: var(--dark);
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .btn-search-trigger:hover {
-            background-color: var(--primary);
-            transform: translateY(-1px);
-        }
-
-        /* Painel do Rastreador de Status */
-        .status-tracker {
-            display: none; /* Oculto até que seja feita a busca */
-            background: var(--white);
-            padding: 40px 35px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.02);
-            margin-top: 30px;
-        }
-
-        /* Design Moderno da Linha do Tempo (Timeline) */
-        .timeline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            margin: 50px 10px 60px 10px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #ebebeb;
-            z-index: 1;
-            transform: translateY(-50%);
-        }
-
-        .timeline-progress {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 0%; /* Controlado dinamicamente via JS */
-            height: 4px;
-            background: var(--primary);
-            z-index: 2;
-            transform: translateY(-50%);
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .step {
-            position: relative;
-            z-index: 3;
-            text-align: center;
-            background: #f4f5f7;
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 4px solid #ebebeb;
-            transition: all 0.4s ease;
-        }
-
-        .step i {
-            color: #aaa;
-            font-size: 1.15rem;
-            transition: all 0.3s ease;
-        }
-
-        /* Estado: Etapa Ativa Atual */
-        .step.active {
-            border-color: var(--primary);
-            background: var(--white);
-            box-shadow: 0 0 0 5px rgba(230, 81, 0, 0.15);
-        }
-
-        .step.active i {
-            color: var(--primary);
-        }
-
-        /* Estado: Etapa Concluída com Sucesso */
-        .step.completed {
-            border-color: #2e7d32;
-            background: #2e7d32;
-        }
-
-        .step.completed i {
-            color: var(--white);
-        }
-
-        /* Correção Crítica do Texto das Etiquetas */
-        .step-label {
-            position: absolute;
-            top: 65px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap; /* CORRIGIDO: Impede quebra de texto feia */
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #777;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .step.active .step-label {
-            color: var(--primary);
-        }
-
-        .step.completed .step-label {
-            color: #2e7d32;
-        }
-
-        /* Detalhes do Pedido */
-        .order-details {
-            margin-top: 40px;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 25px;
-        }
-
-        .order-details h4 {
-            font-size: 1.1rem;
-            color: var(--dark);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            background: #fafafa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #f0f0f0;
-        }
-
-        .details-grid p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: #555;
-            line-height: 1.5;
-        }
-
-        .details-grid strong {
-            color: var(--dark);
-            display: block;
-            margin-bottom: 3px;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-    </style>
+    <title>Consultar Status da Obra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1>Guimara <span>Construção</span></h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="servicos.html">Serviços</a></li>
-                    <li><a href="clientes.html">Clientes</a></li>
-                    <li><a href="agendamento.html">Agendar Visita</a></li>
-                    <li><a href="status.html" style="color: var(--primary); font-weight: bold;">Status do Pedido</a></li>
-                    <li><a href="consultas.html">Consultar Todos</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                </ul>
-            </nav>
-            <a href="https://wa.me/5546999011578" target="_blank" class="btn-whatsapp">
-                <i class="fab fa-whatsapp"></i> (46) 99901-1578
-            </a>
-        </div>
-    </header>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
-    <section class="hero" style="min-height: 30vh; background-image: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1504307651254-35680f356dfd'); background-size: cover; background-position: center;">
-        <div class="hero-content">
-            <h1>Acompanhar meu Pedido</h1>
-            <p>Informe o número de telefone cadastrado para verificar em tempo real o andamento da sua solicitação.</p>
-        </div>
-    </section>
-
-    <section class="sobre bg-light" style="padding: 60px 0;">
-        <div class="container">
-            <div style="max-width: 700px; margin: 0 auto;">
-                
-                <div class="search-card">
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="searchTelefone" style="font-weight: 700; margin-bottom: 10px; display: block; color: var(--dark);">Número de Telefone / WhatsApp:</label>
-                        <div class="input-group-custom">
-                            <i class="fas fa-phone-alt"></i>
-                            <input type="tel" id="searchTelefone" placeholder="Ex: (46) 99901-1578" required>
-                            <button class="btn-search-trigger" onclick="buscarStatus()"><i class="fas fa-search"></i> Buscar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="trackerPanel" class="status-tracker">
-                    <h3 style="color: var(--dark); text-align: center; font-size: 1.6rem; margin-bottom: 5px; font-weight: 700;" id="txtCliente">Olá, Cliente</h3>
-                    <p style="text-align: center; color: #666; font-weight: 500; font-size: 1rem;" id="txtServico">Pedido de Serviço</p>
-                    
-                    <div class="timeline">
-                        <div class="timeline-progress" id="progressLine"></div>
-                        
-                        <div class="step" id="step1">
-                            <i class="fas fa-file-invoice"></i>
-                            <div class="step-label">Solicitado</div>
-                        </div>
-                        <div class="step" id="step2">
-                            <i class="fas fa-calendar-check"></i>
-                            <div class="step-label">Confirmado</div>
-                        </div>
-                        <div class="step" id="step3">
-                            <i class="fas fa-check-double"></i>
-                            <div class="step-label">Concluído</div>
-                        </div>
-                    </div>
-
-                    <div class="order-details">
-                        <h4>Informações do Agendamento</h4>
-                        <div class="details-grid">
-                            <p>
-                                <strong>📍 Local da Visita</strong>
-                                <span id="detalheEndereco">-</span>
-                            </p>
-                            <p>
-                                <strong>📅 Data Pretendida</strong>
-                                <span id="detalheData">-</span>
-                            </p>
-                            <p>
-                                <strong>🛠️ Status Atual</strong>
-                                <span id="detalheStatus" style="font-weight: 700; color: var(--primary);">-</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
+    <nav class="bg-amber-600 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold flex items-center gap-2"><i class="fa-solid fa-helmet-safety"></i> Guimara</a>
+            <div class="hidden md:flex gap-6 font-medium">
+                <a href="/" class="hover:text-amber-200 transition">Início</a>
+                <a href="/servicos.html" class="hover:text-amber-200 transition">Serviços</a>
+                <a href="/agendamentos.html" class="hover:text-amber-200 transition">Agendar</a>
+                <a href="/status.html" class="text-amber-200 font-bold">Status</a>
+                <a href="/clientes.html" class="hover:text-amber-200 transition">Depoimentos</a>
+                <a href="/contato.html" class="hover:text-amber-200 transition">Contato</a>
             </div>
         </div>
-    </section>
+    </nav>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Guimara Construção - Capanema, PR</p>
+    <main class="max-w-xl mx-auto px-4 py-12 flex-grow w-full">
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 mb-2 text-center">Acompanhar meu Pedido</h2>
+            <p class="text-gray-500 text-sm text-center mb-6">Insira o número de telefone usado no agendamento.</p>
+            
+            <div class="flex gap-2">
+                <input type="text" id="telBusca" placeholder="(46) 99999-9999" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <button onclick="buscarStatus()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-lg font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                </button>
+            </div>
         </div>
+
+        <div id="resultado" class="hidden bg-white p-6 rounded-2xl shadow-md border border-gray-100 space-y-4">
+            <div class="flex justify-between items-start border-b pb-4">
+                <div>
+                    <h3 id="resNome" class="text-lg font-bold text-slate-900"></h3>
+                    <p id="resServico" class="text-amber-600 font-medium text-sm"></p>
+                </div>
+                <span id="resStatus" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"></span>
+            </div>
+            <div class="text-sm space-y-2 text-gray-600">
+                <p><strong><i class="fa-solid fa-calendar"></i> Data Prevista:</strong> <span id="resData"></span></p>
+                <p><strong><i class="fa-solid fa-location-dot"></i> Local:</strong> <span id="resEndereco"></span></p>
+                <p><strong><i class="fa-solid fa-align-left"></i> Descrição:</strong> <span id="resDescricao"></span></p>
+            </div>
+        </div>
+
+        <div id="erroBusca" class="hidden bg-red-50 text-red-700 p-4 rounded-xl text-center font-medium border border-red-100"></div>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-sm">
+        <p>&copy; 2026 Guimara Construção. Todos os direitos reservados.</p>
     </footer>
 
     <script>
-        async function buscarStatus() {
-            const telefone = document.getElementById('searchTelefone').value.trim();
-            const trackerPanel = document.getElementById('trackerPanel');
+        async class="code-block" text=async function buscarStatus() {
+            const telefone = document.getElementById('telBusca').value;
+            const resDiv = document.getElementById('resultado');
+            const erroDiv = document.getElementById('erroBusca');
+            
+            resDiv.classList.add('hidden');
+            erroDiv.classList.add('hidden');
 
-            if (!telefone) {
-                alert('Por favor, digite um número de telefone válido.');
-                return;
-            }
+            if(!telefone) return;
 
             try {
                 const response = await fetch(`/api/agendamentos/buscar?telefone=${encodeURIComponent(telefone)}`);
-                
+                const data = await response.json();
+
                 if (!response.ok) {
-                    alert('Nenhum agendamento foi localizado com este número de telefone.');
-                    trackerPanel.style.display = 'none';
+                    erroDiv.innerText = data.error || "Pedido não encontrado.";
+                    erroDiv.classList.remove('hidden');
                     return;
                 }
 
-                const agendamento = await response.json();
+                document.getElementById('resNome').innerText = data.nome;
+                document.getElementById('resServico').innerText = data.servico;
+                document.getElementById('resData').innerText = data.data;
+                document.getElementById('resEndereco').innerText = data.endereco;
+                document.getElementById('resDescricao').innerText = data.descricao || "Sem observações.";
                 
-                // Ativa a exibição do painel principal
-                trackerPanel.style.display = 'block';
+                const statusBadge = document.getElementById('resStatus');
+                statusBadge.innerText = data.status;
                 
-                // Preenchimento de campos textuais nativos
-                document.getElementById('txtCliente').innerText = `Olá, ${agendamento.nome}`;
-                document.getElementById('txtServico').innerText = `Projeto: ${agendamento.servico}`;
-                document.getElementById('detalheEndereco').innerText = agendamento.endereco;
-                
-                // Formatação simples de datas de padrão ISO para PT-BR
-                const dataFormatada = agendamento.data.split('-').reverse().join('/');
-                document.getElementById('detalheData').innerText = dataFormatada;
-                document.getElementById('detalheStatus').innerText = agendamento.status;
-
-                // Captura os nós dos passos da linha do tempo
-                const s1 = document.getElementById('step1');
-                const s2 = document.getElementById('step2');
-                const s3 = document.getElementById('step3');
-                const progress = document.getElementById('progressLine');
-                
-                // Reseta a árvore de classes CSS antes de recalcular o status
-                s1.className = 'step'; 
-                s2.className = 'step'; 
-                s3.className = 'step';
-
-                // Tratamento e renderização dinâmica dos estados
-                if (agendamento.status === 'Pendente') {
-                    s1.className = 'step active';
-                    progress.style.width = '0%';
-                } else if (agendamento.status === 'Confirmado') {
-                    s1.className = 'step completed';
-                    s2.className = 'step active';
-                    progress.style.width = '50%';
-                } else if (agendamento.status === 'Concluido' || agendamento.status === 'Concluído') {
-                    s1.className = 'step completed';
-                    s2.className = 'step completed';
-                    s3.className = 'step completed';
-                    progress.style.width = '100%';
+                // Mudar cores do status dinamicamente
+                if (data.status === 'Confirmado' || data.status === 'Concluído') {
+                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-green-100 text-green-800";
+                } else {
+                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-yellow-100 text-yellow-800";
                 }
 
-            } catch (error) {
-                console.error('Erro ao processar busca no servidor:', error);
-                alert('Erro de conexão com o banco de dados do servidor.');
+                resDiv.classList.remove('hidden');
+            } catch (err) {
+                erroDiv.innerText = "Erro ao conectar com o servidor.";
+                erroDiv.classList.remove('hidden');
             }
         }
     </script>
