@@ -3,112 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guimara Construção - Pedreiro Profissional em Capanema-PR</title>
-    <meta name="description" content="Guimara Construção - Reformas, alvenaria e construções em Capanema-PR. Agende sua obra agora!">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Guimara Construção</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <h1>Guimara <span>Construção</span></h1>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="servicos.html">Serviços</a></li>
-                    <li><a href="clientes.html">Clientes</a></li>
-                    <li><a href="#agendar">Agendar Obra</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                    <li><a href="admin.html">Admin</a></li>
-                </ul>
-            </nav>
-            <a href="https://wa.me/5546999021479" target="_blank" class="btn btn-primary">
-                <i class="fab fa-whatsapp"></i> WhatsApp
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <nav class="bg-amber-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-helmet-safety"></i> Guimara
             </a>
+            <div class="hidden md:flex gap-6 font-medium">
+                <a href="/" class="hover:text-amber-200 transition">Início</a>
+                <a href="/servicos.html" class="hover:text-amber-200 transition">Serviços</a>
+                <a href="/agendamentos.html" class="hover:text-amber-200 transition">Agendar</a>
+                <a href="/status.html" class="hover:text-amber-200 transition">Status</a>
+                <a href="/clientes.html" class="hover:text-amber-200 transition">Depoimentos</a>
+                <a href="/contato.html" class="hover:text-amber-200 transition">Contato</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-slate-900 text-white py-20 px-4 text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=1200&q=80');">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Construindo e Reformando Sonhos</h1>
+            <p class="text-lg text-slate-300 mb-8">Trabalho honesto, caprichoso e com garantia de qualidade para a sua obra em Capanema e região.</p>
+            <div class="flex justify-center gap-4">
+                <a href="/agendamentos.html" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-6 py-3 rounded-lg shadow transition">Solicitar Orçamento</a>
+                <a href="/servicos.html" class="bg-transparent border-2 border-white hover:bg-white hover:text-slate-900 font-bold px-6 py-3 rounded-lg transition">Nossos Serviços</a>
+            </div>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Guimara Construção</h1>
-            <p>Pedreiro profissional com mais de 10 anos de experiência em Capanema - PR</p>
-            <div class="hero-buttons">
-                <a href="#agendar" class="btn btn-primary">Agendar Obra Agora</a>
-                <a href="https://wa.me/5546999011578" target="_blank" class="btn btn-outline">Falar no WhatsApp</a>
+    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow">
+        <div class="grid md:grid-cols-3 gap-8 text-center">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div class="text-amber-600 text-4xl mb-3"><i class="fa-solid fa-star"></i></div>
+                <h3 class="text-xl font-bold mb-2">Qualidade Máxima</h3>
+                <p class="text-gray-600 text-sm">Acabamentos impecáveis e atenção aos mínimos detalhes do projeto.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div class="text-amber-600 text-4xl mb-3"><i class="fa-solid fa-clock"></i></div>
+                <h3 class="text-xl font-bold mb-2">Compromisso com Prazo</h3>
+                <p class="text-gray-600 text-sm">Sua obra entregue exatamente no tempo combinado, sem desculpas.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <div class="text-amber-600 text-4xl mb-3"><i class="fa-solid fa-handshake"></i></div>
+                <h3 class="text-xl font-bold mb-2">Preço Justo</h3>
+                <p class="text-gray-600 text-sm">Orçamentos transparentes, honestos e sem taxas escondidas.</p>
             </div>
         </div>
-    </section>
+    </main>
 
-    <section class="sobre">
-        <div class="container">
-            <h2 class="section-title">Sobre Nós</h2>
-            <div class="sobre-grid">
-                <div class="sobre-text">
-                    <p>Com mais de 10 anos de experiência no mercado de construção civil, a <strong>Guimara Construção</strong> é sinônimo de qualidade, pontualidade e transparência.</p>
-                    <p>Realizamos desde pequenas reformas até projetos completos com excelência.</p>
-                    <a href="servicos.html" class="btn btn-primary">Conheça nossos serviços</a>
-                </div>
-                <div>
-                    <img src="fundo2.png" alt="Materiais de Construção">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="agendar" class="agendar-section">
-        <div class="container">
-            <h2 class="section-title" style="color:white;">Agende sua Obra</h2>
-            <div class="agendar-form">
-                <form id="agendamentoForm">
-                    <div class="form-group">
-                        <label>Nome Completo *</label>
-                        <input type="text" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Telefone *</label>
-                            <input type="tel" value="(46) 99902-1479" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Data Desejada</label>
-                            <input type="date" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Tipo de Serviço *</label>
-                        <select required>
-                            <option value="">Selecione...</option>
-                            <option>Reformas Residenciais</option>
-                            <option>Alvenaria e Construção</option>
-                            <option>Pisos e Revestimentos</option>
-                            <option>Lajes e Coberturas</option>
-                            <option>Acabamentos Finos</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Descrição / Endereço *</label>
-                        <textarea rows="4" required placeholder="Descreva o projeto..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%; padding:16px;">Solicitar Orçamento e Agendar</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Guimara Construção - Capanema, PR • Todos os direitos reservados</p>
-        </div>
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-sm border-t border-slate-700">
+        <p>&copy; 2026 Guimara Construção. Todos os direitos reservados.</p>
     </footer>
 
-    <script>
-        document.getElementById('agendamentoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('✅ Solicitação enviada com sucesso!\n\nEntraremos em contato em breve pelo WhatsApp.');
-            this.reset();
-        });
-    </script>
 </body>
 </html>
