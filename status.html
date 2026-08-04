@@ -36,20 +36,7 @@
             </div>
         </div>
 
-        <div id="resultado" class="hidden bg-white p-6 rounded-2xl shadow-md border border-gray-100 space-y-4">
-            <div class="flex justify-between items-start border-b pb-4">
-                <div>
-                    <h3 id="resNome" class="text-lg font-bold text-slate-900"></h3>
-                    <p id="resServico" class="text-amber-600 font-medium text-sm"></p>
-                </div>
-                <span id="resStatus" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"></span>
-            </div>
-            <div class="text-sm space-y-2 text-gray-600">
-                <p><strong><i class="fa-solid fa-calendar"></i> Data Prevista:</strong> <span id="resData"></span></p>
-                <p><strong><i class="fa-solid fa-location-dot"></i> Local:</strong> <span id="resEndereco"></span></p>
-                <p><strong><i class="fa-solid fa-align-left"></i> Descrição:</strong> <span id="resDescricao"></span></p>
-            </div>
-        </div>
+        <div id="listaResultados" class="space-y-4"></div>
 
         <div id="erroBusca" class="hidden bg-red-50 text-red-700 p-4 rounded-xl text-center font-medium border border-red-100"></div>
     </main>
@@ -59,15 +46,16 @@
     </footer>
 
     <script>
-        async class="code-block" text=async function buscarStatus() {
-            const telefone = document.getElementById('telBusca').value;
-            const resDiv = document.getElementById('resultado');
+        // Função para realizar a busca
+        async function buscarStatus(telefoneParam) {
+            const telefone = telefoneParam || document.getElementById('telBusca').value;
+            const listaDiv = document.getElementById('listaResultados');
             const erroDiv = document.getElementById('erroBusca');
             
-            resDiv.classList.add('hidden');
+            listaDiv.innerHTML = '';
             erroDiv.classList.add('hidden');
 
-            if(!telefone) return;
+            if (!telefone) return;
 
             try {
                 const response = await fetch(`/api/agendamentos/buscar?telefone=${encodeURIComponent(telefone)}`);
@@ -79,28 +67,47 @@
                     return;
                 }
 
-                document.getElementById('resNome').innerText = data.nome;
-                document.getElementById('resServico').innerText = data.servico;
-                document.getElementById('resData').innerText = data.data;
-                document.getElementById('resEndereco').innerText = data.endereco;
-                document.getElementById('resDescricao').innerText = data.descricao || "Sem observações.";
-                
-                const statusBadge = document.getElementById('resStatus');
-                statusBadge.innerText = data.status;
-                
-                // Mudar cores do status dinamicamente
-                if (data.status === 'Confirmado' || data.status === 'Concluído') {
-                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-green-100 text-green-800";
-                } else {
-                    statusBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-yellow-100 text-yellow-800";
-                }
+                // Exibir todos os pedidos retornados
+                data.forEach(item => {
+                    const statusClass = item.status === 'Confirmado' ? 'bg-green-100 text-green-800' : 
+                                      item.status === 'Concluído' ? 'bg-blue-100 text-blue-800' : 
+                                      'bg-yellow-100 text-yellow-800';
 
-                resDiv.classList.remove('hidden');
+                    listaDiv.innerHTML += `
+                        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 space-y-4">
+                            <div class="flex justify-between items-start border-b pb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900">${item.nome}</h3>
+                                    <p class="text-amber-600 font-medium text-sm">${item.servico}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusClass}">
+                                    ${item.status}
+                                </span>
+                            </div>
+                            <div class="text-sm space-y-2 text-gray-600">
+                                <p><strong><i class="fa-solid fa-calendar"></i> Data Prevista:</strong> ${item.data}</p>
+                                <p><strong><i class="fa-solid fa-location-dot"></i> Local:</strong> ${item.endereco}</p>
+                                <p><strong><i class="fa-solid fa-align-left"></i> Descrição:</strong> ${item.descricao || "Sem observações."}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
             } catch (err) {
                 erroDiv.innerText = "Erro ao conectar com o servidor.";
                 erroDiv.classList.remove('hidden');
             }
         }
+
+        // Executa busca automática caso a URL contenha o parâmetro ?telefone=...
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tel = urlParams.get('telefone');
+            if (tel) {
+                document.getElementById('telBusca').value = tel;
+                buscarStatus(tel);
+            }
+        });
     </script>
 </body>
 </html>
