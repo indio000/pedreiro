@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // ==========================================
-// 1. BANCO DE DADOS EM MEMÓRIA - AGENDAMENTOS
+// 1. BANCO DE DADOS EM MEMÓRIA
 // ==========================================
 let bancoAgendamentos = [
     {
@@ -36,46 +36,101 @@ let bancoAgendamentos = [
     }
 ];
 
-// ==========================================
-// 2. BANCO DE DADOS EM MEMÓRIA - FEEDBACKS (CLIENTES)
-// ==========================================
 let bancoFeedbacks = [
     {
         nome: "Maria Silva",
         cidade: "Capanema",
         mensagem: "Excelente profissional! Fez a reforma da minha casa com qualidade e no prazo.",
         data: "2026-05-10"
-    },
-    {
-        nome: "João Mendes",
-        cidade: "Capanema",
-        mensagem: "Muito caprichoso e honesto. Recomendo para quem quer um bom pedreiro.",
-        data: "2026-05-20"
-    },
-    {
-        nome: "Ana Paula",
-        cidade: "Capanema - PR",
-        mensagem: "Trabalho impecável. Transformou minha cozinha completamente.",
-        data: "2026-06-01"
     }
 ];
+
+// ==========================================
+// 2. SISTEMA DE AUTENTICAÇÃO / SESSÃO (ADMIN)
+// ==========================================
+const SENHA_ADMIN = "1234";
+const sessoesAtivas = new Set(); // Guarda tokens de sessões ativas
+
+// Helper para ler cookies da requisição
+function parseCookies(req) {
+    const list = {};
+    const rc = req.headers.cookie;
+    if (rc) {
+        rc.split(';').forEach(cookie => {
+            const parts = cookie.split('=');
+            list[parts.shift().trim()] = decodeURI(parts.join('='));
+        });
+    }
+    return list;
+}
+
+// Middleware para proteger rotas do Admin
+function verificarAutenticacao(req, res, next) {
+    const cookies = parseCookies(req);
+    const sessionToken = cookies.admin_session;
+
+    if (sessionToken && sessoesAtivas.has(sessionToken)) {
+        return next();
+    }
+    
+    // Se a requisição for para a API, envia erro 401
+    if (req.path.startsWith('/api/')) {
+        return res.status(401).json({ error: "Não autorizado. Faça login primeiro." });
+    }
+    
+    // Se for rota de página, redireciona para login
+    res.redirect('/admin');
+}
+
+// Rota de Login do Admin
+app.post('/api/admin/login', (req, res) => {
+    const { senha } = req.body;
+
+    if (senha === SENHA_ADMIN) {
+        const tokenSession = 'token_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        sessoesAtivas.add(tokenSession);
+
+        // Define o cookie de sessão (expira ao fechar o navegador ou em 2 horas)
+        res.setHeader('Set-Cookie', `admin_session=${tokenSession}; Path=/; HttpOnly; Max-Age=7200`);
+        return res.json({ ok: true, message: "Login realizado com sucesso!" });
+    }
+
+    res.status(401).json({ error: "Senha incorreta!" });
+});
+
+// Rota de Logout do Admin
+app.post('/api/admin/logout', (req, res) => {
+    const cookies = parseCookies(req);
+    if (cookies.admin_session) {
+        sessoesAtivas.delete(cookies.admin_session);
+    }
+    res.setHeader('Set-Cookie', 'admin_session=; Path=/; HttpOnly; Max-Age=0');
+    res.json({ ok: true, message: "Logout realizado com sucesso." });
+});
+
+// Checar status da sessão
+app.get('/api/admin/check-session', (req, res) => {
+    const cookies = parseCookies(req);
+    const autenticado = cookies.admin_session && sessoesAtivas.has(cookies.admin_session);
+    res.json({ autenticado: !!autenticado });
+});
 
 // ------------------------------------------
 // ROTAS DE AGENDAMENTOS
 // ------------------------------------------
 
-// Obter todos os agendamentos (usado pela tela do Admin)
-app.get('/api/agendamentos', (req, res) => {
+// Obter todos os agendamentos (Protegido por senha)
+app.get('/api/agendamentos', verificarAutenticacao, (req, res) => {
     res.json(bancoAgendamentos);
 });
 
-// Obter apenas agendamentos com status 'Pendente'
-app.get('/api/agendamentos/pendentes', (req, res) => {
+// Obter apenas agendamentos com status 'Pendente' (Protegido)
+app.get('/api/agendamentos/pendentes', verificarAutenticacao, (req, res) => {
     const pendentes = bancoAgendamentos.filter(item => item.status === 'Pendente');
     res.json(pendentes);
 });
 
-// Buscar um agendamento específico por telefone (usado pelo cliente)
+// Buscar agendamento por telefone (Público - usado pelo cliente)
 app.get('/api/agendamentos/buscar', (req, res) => {
     const telefoneBusca = req.query.telefone;
     if (!telefoneBusca) return res.status(400).json({ error: "Telefone não informado." });
@@ -90,11 +145,10 @@ app.get('/api/agendamentos/buscar', (req, res) => {
         return res.status(404).json({ error: "Nenhum pedido localizado para este número." });
     }
     
-    // Retorna todos os pedidos encontrados para aquele número
     res.json(encontrados);
 });
 
-// Receber novos agendamentos enviados pelo cliente
+// Receber novos agendamentos enviados pelo cliente (Público)
 app.post('/api/agendamentos', (req, res) => {
     const { nome, telefone, endereco, data, servico, descricao } = req.body;
     
@@ -113,13 +167,12 @@ app.post('/api/agendamentos', (req, res) => {
         status: "Pendente"
     };
     
-    // Insere no início da lista para visualização prioritária no Admin
     bancoAgendamentos.unshift(novoAgendamento); 
     res.status(201).json({ message: "Agendamento realizado com sucesso!", id: novoAgendamento.id, telefone: novoAgendamento.telefone });
 });
 
-// Atualizar status da obra
-app.put('/api/agendamentos/status', (req, res) => {
+// Atualizar status da obra (Protegido)
+app.put('/api/agendamentos/status', verificarAutenticacao, (req, res) => {
     const { id, status } = req.body;
     const agendamento = bancoAgendamentos.find(item => item.id === id);
     if (agendamento) {
@@ -129,8 +182,8 @@ app.put('/api/agendamentos/status', (req, res) => {
     res.status(404).json({ error: "Agendamento não encontrado." });
 });
 
-// Remover ou cancelar agendamento
-app.delete('/api/agendamentos/:id', (req, res) => {
+// Remover agendamento (Protegido)
+app.delete('/api/agendamentos/:id', verificarAutenticacao, (req, res) => {
     const id = req.params.id;
     const indice = bancoAgendamentos.findIndex(item => item.id === id);
     if (indice === -1) return res.status(404).json({ error: "Agendamento não encontrado." });
