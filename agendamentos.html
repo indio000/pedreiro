@@ -73,9 +73,10 @@
     <script>
         document.getElementById('formAgendamento').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const telInput = document.getElementById('telefone').value;
             const dados = {
                 nome: document.getElementById('nome').value,
-                telefone: document.getElementById('telefone').value,
+                telefone: telInput,
                 data: document.getElementById('data').value,
                 endereco: document.getElementById('endereco').value,
                 servico: document.getElementById('servico').value,
@@ -90,8 +91,9 @@
                 });
                 const resData = await response.json();
                 if (response.ok) {
-                    alert('Solicitação enviada! Guarde seu telefone para consultar o status.');
-                    window.location.href = '/status.html';
+                    alert('Solicitação realizada com sucesso! Redirecionando para acompanhamento...');
+                    // Redireciona passando o telefone como parâmetro
+                    window.location.href = `/status.html?telefone=${encodeURIComponent(telInput)}`;
                 } else {
                     alert('Erro: ' + resData.error);
                 }
