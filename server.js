@@ -61,30 +61,40 @@ let bancoFeedbacks = [
 ];
 
 // ------------------------------------------
-// ROTAS DE AGENDAMENTOS (PROJETO COMPLETO)
+// ROTAS DE AGENDAMENTOS
 // ------------------------------------------
 
-// Obter todos os agendamentos (usado pela tela do Admin para listar as obras)
+// Obter todos os agendamentos (usado pela tela do Admin)
 app.get('/api/agendamentos', (req, res) => {
     res.json(bancoAgendamentos);
 });
 
-// Buscar um agendamento específico por telefone (usado pelo cliente na consulta de status)
+// Obter apenas agendamentos com status 'Pendente'
+app.get('/api/agendamentos/pendentes', (req, res) => {
+    const pendentes = bancoAgendamentos.filter(item => item.status === 'Pendente');
+    res.json(pendentes);
+});
+
+// Buscar um agendamento específico por telefone (usado pelo cliente)
 app.get('/api/agendamentos/buscar', (req, res) => {
     const telefoneBusca = req.query.telefone;
     if (!telefoneBusca) return res.status(400).json({ error: "Telefone não informado." });
 
     const telefoneLimpo = telefoneBusca.replace(/\D/g, '');
-    const encontrado = bancoAgendamentos.find(item => {
+    const encontrados = bancoAgendamentos.filter(item => {
         const itemTelLimpo = item.telefone ? item.telefone.replace(/\D/g, '') : '';
         return itemTelLimpo.includes(telefoneLimpo) || telefoneLimpo.includes(itemTelLimpo);
     });
 
-    if (!encontrado) return res.status(404).json({ error: "Nenhum pedido localizado." });
-    res.json(encontrado);
+    if (!encontrados || encontrados.length === 0) {
+        return res.status(404).json({ error: "Nenhum pedido localizado para este número." });
+    }
+    
+    // Retorna todos os pedidos encontrados para aquele número
+    res.json(encontrados);
 });
 
-// Receber novos agendamentos enviados pelo formulário do cliente
+// Receber novos agendamentos enviados pelo cliente
 app.post('/api/agendamentos', (req, res) => {
     const { nome, telefone, endereco, data, servico, descricao } = req.body;
     
@@ -93,22 +103,22 @@ app.post('/api/agendamentos', (req, res) => {
     }
     
     const novoAgendamento = {
-        id: Date.now().toString(), // Gera um ID único baseado no timestamp
+        id: Date.now().toString(),
         nome, 
         telefone, 
         endereco, 
         data, 
         servico, 
         descricao: descricao || "", 
-        status: "Pendente" // Todo agendamento entra inicialmente como Pendente
+        status: "Pendente"
     };
     
-    // Insere no início da lista para que o Admin veja o mais recente primeiro
+    // Insere no início da lista para visualização prioritária no Admin
     bancoAgendamentos.unshift(novoAgendamento); 
-    res.status(201).json({ message: "Agendamento realizado com sucesso!", id: novoAgendamento.id });
+    res.status(201).json({ message: "Agendamento realizado com sucesso!", id: novoAgendamento.id, telefone: novoAgendamento.telefone });
 });
 
-// Atualizar status da obra (Aprovado, Confirmado, Concluído) via Admin
+// Atualizar status da obra
 app.put('/api/agendamentos/status', (req, res) => {
     const { id, status } = req.body;
     const agendamento = bancoAgendamentos.find(item => item.id === id);
@@ -119,7 +129,7 @@ app.put('/api/agendamentos/status', (req, res) => {
     res.status(404).json({ error: "Agendamento não encontrado." });
 });
 
-// Remover ou cancelar um agendamento via painel Admin
+// Remover ou cancelar agendamento
 app.delete('/api/agendamentos/:id', (req, res) => {
     const id = req.params.id;
     const indice = bancoAgendamentos.findIndex(item => item.id === id);
@@ -129,7 +139,7 @@ app.delete('/api/agendamentos/:id', (req, res) => {
 });
 
 // ------------------------------------------
-// ROTAS DE FEEDBACKS (Aba Clientes)
+// ROTAS DE FEEDBACKS
 // ------------------------------------------
 
 app.get('/api/feedbacks', (req, res) => {
@@ -158,16 +168,13 @@ app.post('/api/feedbacks', (req, res) => {
 // ROTAS DE RENDERIZAÇÃO DAS PÁGINAS (HTML)
 // ------------------------------------------
 
-// Rota raiz - Página Inicial do cliente
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Nova Rota Privada/Aba - Painel de Controle do Administrador
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
-
 
 // Inicialização do Servidor Local
 app.listen(PORT, () => {
