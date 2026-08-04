@@ -9,66 +9,158 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-    <header class="bg-slate-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-bold flex items-center gap-2">
-            <i class="fa-solid fa-screwdriver-wrench text-amber-500"></i> Painel de Controle - Obras
-        </h1>
-        <a href="/" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-slate-300">Sair do Painel</a>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Serviços Pendentes</p>
-                    <h3 id="qtdPendentes" class="text-3xl font-extrabold text-yellow-600">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
+    <div id="telaLogin" class="fixed inset-0 bg-slate-900 bg-opacity-95 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-200 text-center">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fa-solid fa-lock"></i>
             </div>
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-slate-900 mb-1">Acesso Restrito</h2>
+            <p class="text-xs text-slate-500 mb-6">Digite a senha do administrador para visualizar os orçamentos das obras.</p>
+            
+            <form onsubmit="fazerLogin(event)" class="space-y-4">
                 <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total de Solictações</p>
-                    <h3 id="qtdTotal" class="text-3xl font-extrabold text-slate-800">0</h3>
+                    <input type="password" id="inputSenha" placeholder="Senha de Acesso" required
+                        class="w-full px-4 py-3 border border-slate-300 rounded-lg text-center font-bold text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                 </div>
-                <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-list-check"></i>
-                </div>
-            </div>
+                <div id="msgErroLogin" class="text-xs text-red-600 font-semibold hidden"></div>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow-md transition">
+                    Entrar no Painel
+                </button>
+            </form>
+            <a href="/" class="inline-block mt-4 text-xs text-slate-400 hover:text-slate-600">Voltar para o site principal</a>
         </div>
+    </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <button onclick="definirFiltro('todos')" id="btnFiltroTodos" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-600 text-white">Todos</button>
-                    <button onclick="definirFiltro('pendentes')" id="btnFiltroPendentes" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300">Apenas Pendentes</button>
-                </div>
-                <button onclick="carregarAgendamentos()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded font-medium flex items-center gap-1">
-                    <i class="fa-solid fa-rotate"></i> Atualizar
+    <div id="conteudoPainel" class="hidden flex-col min-h-screen">
+        <header class="bg-slate-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-screwdriver-wrench text-amber-500"></i> Painel de Controle - Obras
+            </h1>
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-slate-300">Ir ao Site</a>
+                <button onclick="fazerLogout()" class="text-xs bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-white font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
                 </button>
             </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-sm">
-                    <thead>
-                        <tr class="bg-slate-100 text-slate-600 uppercase font-semibold text-xs tracking-wider border-b">
-                            <th class="p-4">Cliente / Contato</th>
-                            <th class="p-4">Serviço / Detalhes</th>
-                            <th class="p-4">Data / Local</th>
-                            <th class="p-4">Status</th>
-                            <th class="p-4 text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaCorpo" class="divide-y divide-slate-100">
-                    </tbody>
-                </table>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Serviços Pendentes</p>
+                        <h3 id="qtdPendentes" class="text-3xl font-extrabold text-yellow-600">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total de Solicitações</p>
+                        <h3 id="qtdTotal" class="text-3xl font-extrabold text-slate-800">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                </div>
             </div>
-        </div>
-    </main>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <button onclick="definirFiltro('todos')" id="btnFiltroTodos" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-600 text-white">Todos</button>
+                        <button onclick="definirFiltro('pendentes')" id="btnFiltroPendentes" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-200 text-slate-700 hover:bg-slate-300">Apenas Pendentes</button>
+                    </div>
+                    <button onclick="carregarAgendamentos()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-rotate"></i> Atualizar
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 uppercase font-semibold text-xs tracking-wider border-b">
+                                <th class="p-4">Cliente / Contato</th>
+                                <th class="p-4">Serviço / Detalhes</th>
+                                <th class="p-4">Data / Local</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaCorpo" class="divide-y divide-slate-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
         let filtroAtual = 'todos';
+
+        // Verifica a sessão ao carregar a página
+        async function verificarSessao() {
+            try {
+                const res = await fetch('/api/admin/check-session');
+                const data = await res.json();
+
+                if (data.autenticado) {
+                    exibirPainel();
+                } else {
+                    exibirLogin();
+                }
+            } catch (e) {
+                exibirLogin();
+            }
+        }
+
+        function exibirPainel() {
+            document.getElementById('telaLogin').classList.add('hidden');
+            document.getElementById('conteudoPainel').classList.remove('hidden');
+            document.getElementById('conteudoPainel').classList.add('flex');
+            carregarAgendamentos();
+        }
+
+        function exibirLogin() {
+            document.getElementById('telaLogin').classList.remove('hidden');
+            document.getElementById('conteudoPainel').classList.add('hidden');
+            document.getElementById('conteudoPainel').classList.remove('flex');
+        }
+
+        async function fazerLogin(e) {
+            e.preventDefault();
+            const senha = document.getElementById('inputSenha').value;
+            const msgErro = document.getElementById('msgErroLogin');
+
+            msgErro.classList.add('hidden');
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ senha })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('inputSenha').value = '';
+                    exibirPainel();
+                } else {
+                    msgErro.innerText = data.error || "Senha incorreta!";
+                    msgErro.classList.remove('hidden');
+                }
+            } catch (err) {
+                msgErro.innerText = "Erro ao tentar realizar login.";
+                msgErro.classList.remove('hidden');
+            }
+        }
+
+        async function fazerLogout() {
+            await fetch('/api/admin/logout', { method: 'POST' });
+            exibirLogin();
+        }
 
         function definirFiltro(tipo) {
             filtroAtual = tipo;
@@ -88,14 +180,17 @@
         async function carregarAgendamentos() {
             try {
                 const res = await fetch('/api/agendamentos');
+                if (res.status === 401) {
+                    exibirLogin();
+                    return;
+                }
+
                 const agendamentos = await res.json();
                 
-                // Atualizar Contadores
                 const pendentes = agendamentos.filter(a => a.status === 'Pendente');
                 document.getElementById('qtdPendentes').innerText = pendentes.length;
                 document.getElementById('qtdTotal').innerText = agendamentos.length;
 
-                // Filtrar lista conforme seleção
                 const listaExibicao = filtroAtual === 'pendentes' ? pendentes : agendamentos;
 
                 const tbody = document.getElementById('tabelaCorpo');
@@ -156,7 +251,8 @@
             carregarAgendamentos();
         }
 
-        carregarAgendamentos();
+        // Executa ao carregar a página
+        verificarSessao();
     </script>
 </body>
 </html>
