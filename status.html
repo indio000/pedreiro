@@ -26,10 +26,10 @@
     <main class="max-w-xl mx-auto px-4 py-12 flex-grow w-full">
         <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-6">
             <h2 class="text-2xl font-bold text-slate-900 mb-2 text-center">Acompanhar meu Pedido</h2>
-            <p class="text-gray-500 text-sm text-center mb-6">Insira o número de telefone usado no agendamento.</p>
+            <p class="text-gray-500 text-sm text-center mb-6">Insira o nome do cliente usado no agendamento.</p>
             
             <div class="flex gap-2">
-                <input type="text" id="telBusca" placeholder="(46) 99999-9999" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <input type="text" id="nomeBusca" placeholder="Nome completo" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
                 <button onclick="buscarStatus()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-lg font-bold transition flex items-center gap-2">
                     <i class="fa-solid fa-magnifying-glass"></i> Buscar
                 </button>
@@ -46,19 +46,19 @@
     </footer>
 
     <script>
-        // Função para realizar a busca
-        async function buscarStatus(telefoneParam) {
-            const telefone = telefoneParam || document.getElementById('telBusca').value;
+        // Função para realizar a busca por nome
+        async function buscarStatus(nomeParam) {
+            const nome = nomeParam || document.getElementById('nomeBusca').value;
             const listaDiv = document.getElementById('listaResultados');
             const erroDiv = document.getElementById('erroBusca');
             
             listaDiv.innerHTML = '';
             erroDiv.classList.add('hidden');
 
-            if (!telefone) return;
+            if (!nome) return;
 
             try {
-                const response = await fetch(`/api/agendamentos/buscar?telefone=${encodeURIComponent(telefone)}`);
+                const response = await fetch(`/api/agendamentos/buscar?nome=${encodeURIComponent(nome)}`);
                 const data = await response.json();
 
                 if (!response.ok) {
@@ -70,8 +70,8 @@
                 // Exibir todos os pedidos retornados
                 data.forEach(item => {
                     const statusClass = item.status === 'Confirmado' ? 'bg-green-100 text-green-800' : 
-                                      item.status === 'Concluído' ? 'bg-blue-100 text-blue-800' : 
-                                      'bg-yellow-100 text-yellow-800';
+                                        item.status === 'Concluído' ? 'bg-blue-100 text-blue-800' : 
+                                        'bg-yellow-100 text-yellow-800';
 
                     listaDiv.innerHTML += `
                         <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 space-y-4">
@@ -99,13 +99,13 @@
             }
         }
 
-        // Executa busca automática caso a URL contenha o parâmetro ?telefone=...
+        // Executa busca automática caso a URL contenha o parâmetro ?nome=...
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const tel = urlParams.get('telefone');
-            if (tel) {
-                document.getElementById('telBusca').value = tel;
-                buscarStatus(tel);
+            const nomeUrl = urlParams.get('nome');
+            if (nomeUrl) {
+                document.getElementById('nomeBusca').value = nomeUrl;
+                buscarStatus(nomeUrl);
             }
         });
     </script>
