@@ -99,17 +99,12 @@
     <script>
         let filtroAtual = 'todos';
 
-        // Verifica a sessão ao carregar a página
         async function verificarSessao() {
             try {
                 const res = await fetch('/api/admin/check-session');
                 const data = await res.json();
-
-                if (data.autenticado) {
-                    exibirPainel();
-                } else {
-                    exibirLogin();
-                }
+                if (data.autenticado) exibirPainel();
+                else exibirLogin();
             } catch (e) {
                 exibirLogin();
             }
@@ -132,7 +127,6 @@
             e.preventDefault();
             const senha = document.getElementById('inputSenha').value;
             const msgErro = document.getElementById('msgErroLogin');
-
             msgErro.classList.add('hidden');
 
             try {
@@ -143,7 +137,6 @@
                 });
 
                 const data = await res.json();
-
                 if (res.ok) {
                     document.getElementById('inputSenha').value = '';
                     exibirPainel();
@@ -186,24 +179,21 @@
                 }
 
                 const agendamentos = await res.json();
-                
                 const pendentes = agendamentos.filter(a => a.status === 'Pendente');
                 document.getElementById('qtdPendentes').innerText = pendentes.length;
                 document.getElementById('qtdTotal').innerText = agendamentos.length;
 
                 const listaExibicao = filtroAtual === 'pendentes' ? pendentes : agendamentos;
-
                 const tbody = document.getElementById('tabelaCorpo');
-                tbody.innerHTML = '';
 
                 if (listaExibicao.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-500">Nenhum agendamento encontrado.</td></tr>`;
                     return;
                 }
 
-                listaExibicao.forEach(item => {
+                tbody.innerHTML = listaExibicao.map(item => {
                     const ePendente = item.status === 'Pendente';
-                    tbody.innerHTML += `
+                    return `
                         <tr class="${ePendente ? 'bg-yellow-50/50 hover:bg-yellow-100/50' : 'hover:bg-slate-50'} transition">
                             <td class="p-4">
                                 <div class="font-bold text-slate-900">${item.nome}</div>
@@ -228,11 +218,13 @@
                                 </select>
                             </td>
                             <td class="p-4 text-center">
-                                <button onclick="deletarAgendamento('${item.id}')" class="text-red-500 hover:text-red-700 text-sm p-1"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="deletarAgendamento('${item.id}')" class="text-red-500 hover:text-red-700 text-sm p-1">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     `;
-                });
+                }).join('');
             } catch(e) { console.error(e); }
         }
 
@@ -251,7 +243,6 @@
             carregarAgendamentos();
         }
 
-        // Executa ao carregar a página
         verificarSessao();
     </script>
 </body>
