@@ -41,6 +41,7 @@ let bancoFeedbacks = [
         nome: "Maria Silva",
         cidade: "Capanema",
         mensagem: "Excelente profissional! Fez a reforma da minha casa com qualidade e no prazo.",
+        estrelas: 5,
         data: "2026-05-10"
     }
 ];
@@ -222,16 +223,20 @@ app.get('/api/feedbacks', (req, res) => {
 });
 
 app.post('/api/feedbacks', (req, res) => {
-    const { nome, cidade, mensagem } = req.body;
+    const { nome, cidade, mensagem, estrelas } = req.body;
 
     if (!nome || !mensagem) {
         return res.status(400).json({ error: "Nome e mensagem são obrigatórios." });
     }
 
+    const valorEstrelas = parseInt(estrelas);
+    const estrelasValidadas = (!isNaN(valorEstrelas) && valorEstrelas >= 1 && valorEstrelas <= 5) ? valorEstrelas : 5;
+
     const novoFeedback = {
         nome,
         cidade: cidade || "Capanema - PR",
         mensagem,
+        estrelas: estrelasValidadas,
         data: new Date().toISOString().split('T')[0]
     };
 
