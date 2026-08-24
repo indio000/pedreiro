@@ -40,11 +40,50 @@
         <div id="erroBusca" class="hidden bg-red-50 text-red-700 p-4 rounded-xl text-center font-medium border border-red-100"></div>
     </main>
 
+    <!-- MODAL DE EDIÇÃO -->
+    <div id="modalEditar" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Editar Agendamento</h3>
+                <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="formEditar" onsubmit="salvarEdicao(event)" class="space-y-3">
+                <input type="hidden" id="editId">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Nome Completo</label>
+                    <input type="text" id="editNome" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Serviço</label>
+                    <input type="text" id="editServico" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Data Prevista</label>
+                    <input type="date" id="editData" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Endereço</label>
+                    <input type="text" id="editEndereco" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Descrição / Observações</label>
+                    <textarea id="editDescricao" rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                </div>
+                <div class="flex gap-2 pt-3">
+                    <button type="button" onclick="fecharModal()" class="w-1/2 py-2 border rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50">Cancelar</button>
+                    <button type="submit" class="w-1/2 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer class="bg-slate-800 text-slate-400 py-6 text-center text-sm">
         <p>&copy; 2026 Guimara Construção. Todos os direitos reservados.</p>
     </footer>
 
     <script>
+        let agendamentosCarregados = [];
+
         async function buscarStatus(telefoneParam) {
             const telefone = telefoneParam || document.getElementById('telBusca').value;
             const listaDiv = document.getElementById('listaResultados');
@@ -64,6 +103,8 @@
                     erroDiv.classList.remove('hidden');
                     return;
                 }
+
+                agendamentosCarregados = data;
 
                 data.forEach(item => {
                     const statusClass = item.status === 'Confirmado' ? 'bg-green-100 text-green-800' : 
@@ -86,7 +127,10 @@
                                 <p><strong><i class="fa-solid fa-location-dot"></i> Local:</strong> ${item.endereco}</p>
                                 <p><strong><i class="fa-solid fa-align-left"></i> Descrição:</strong> ${item.descricao || "Sem observações."}</p>
                             </div>
-                            <div class="pt-2 border-t flex justify-end">
+                            <div class="pt-2 border-t flex justify-end gap-2">
+                                <button onclick="abrirModalEditar('${item.id}')" class="text-xs text-amber-600 hover:text-amber-800 font-semibold flex items-center gap-1 border border-amber-200 hover:bg-amber-50 px-3 py-1.5 rounded-lg transition">
+                                    <i class="fa-solid fa-pen"></i> Editar
+                                </button>
                                 <button onclick="deletarAgendamentoCliente('${item.id}')" class="text-xs text-red-600 hover:text-red-800 font-semibold flex items-center gap-1 border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-lg transition">
                                     <i class="fa-solid fa-trash"></i> Cancelar Agendamento
                                 </button>
@@ -98,6 +142,59 @@
             } catch (err) {
                 erroDiv.innerText = "Erro ao conectar com o servidor.";
                 erroDiv.classList.remove('hidden');
+            }
+        }
+
+        function abrirModalEditar(id) {
+            const item = agendamentosCarregados.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById('editId').value = item.id;
+            document.getElementById('editNome').value = item.nome;
+            document.getElementById('editServico').value = item.servico;
+            document.getElementById('editData').value = item.data;
+            document.getElementById('editEndereco').value = item.endereco;
+            document.getElementById('editDescricao').value = item.descricao || '';
+
+            const modal = document.getElementById('modalEditar');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('modalEditar');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function salvarEdicao(e) {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const dados = {
+                nome: document.getElementById('editNome').value,
+                servico: document.getElementById('editServico').value,
+                data: document.getElementById('editData').value,
+                endereco: document.getElementById('editEndereco').value,
+                descricao: document.getElementById('editDescricao').value
+            };
+
+            try {
+                const res = await fetch(`/api/agendamentos/cliente/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                if (res.ok) {
+                    alert("Agendamento atualizado com sucesso!");
+                    fecharModal();
+                    buscarStatus();
+                } else {
+                    const err = await res.json();
+                    alert(err.error || "Erro ao atualizar agendamento.");
+                }
+            } catch (err) {
+                alert("Erro ao conectar com o servidor.");
             }
         }
 
