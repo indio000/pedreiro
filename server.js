@@ -166,6 +166,25 @@ app.post('/api/agendamentos', (req, res) => {
     res.status(201).json({ message: "Agendamento realizado com sucesso!", id: novoAgendamento.id, telefone: novoAgendamento.telefone });
 });
 
+// Editar agendamento pelo Cliente (Público)
+app.put('/api/agendamentos/cliente/:id', (req, res) => {
+    const id = req.params.id;
+    const { nome, servico, data, endereco, descricao } = req.body;
+    
+    const agendamento = bancoAgendamentos.find(item => item.id === id);
+    if (!agendamento) {
+        return res.status(404).json({ error: "Agendamento não encontrado." });
+    }
+
+    if (nome) agendamento.nome = nome;
+    if (servico) agendamento.servico = servico;
+    if (data) agendamento.data = data;
+    if (endereco) agendamento.endereco = endereco;
+    if (descricao !== undefined) agendamento.descricao = descricao;
+
+    res.json({ message: "Agendamento atualizado com sucesso!", agendamento });
+});
+
 // Atualizar status pelo Admin (Protegido)
 app.put('/api/agendamentos/status', verificarAutenticacao, (req, res) => {
     const { id, status } = req.body;
