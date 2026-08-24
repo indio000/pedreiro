@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Servir os ficheiros estáticos (HTML, CSS, Imagens) a partir da pasta raiz
+// Servir os ficheiros estáticos a partir da pasta raiz
 app.use(express.static(path.join(__dirname)));
 
 // ==========================================
@@ -49,9 +49,8 @@ let bancoFeedbacks = [
 // 2. SISTEMA DE AUTENTICAÇÃO / SESSÃO (ADMIN)
 // ==========================================
 const SENHA_ADMIN = "1234";
-const sessoesAtivas = new Set(); // Guarda tokens de sessões ativas
+const sessoesAtivas = new Set();
 
-// Helper para ler cookies da requisição
 function parseCookies(req) {
     const list = {};
     const rc = req.headers.cookie;
@@ -64,7 +63,6 @@ function parseCookies(req) {
     return list;
 }
 
-// Middleware para proteger rotas do Admin
 function verificarAutenticacao(req, res, next) {
     const cookies = parseCookies(req);
     const sessionToken = cookies.admin_session;
@@ -73,16 +71,14 @@ function verificarAutenticacao(req, res, next) {
         return next();
     }
     
-    // Se a requisição for para a API, envia erro 401
     if (req.path.startsWith('/api/')) {
         return res.status(401).json({ error: "Não autorizado. Faça login primeiro." });
     }
     
-    // Se for rota de página, redireciona para login
     res.redirect('/admin');
 }
 
-// Rota de Login do Admin
+// Login
 app.post('/api/admin/login', (req, res) => {
     const { senha } = req.body;
 
@@ -90,7 +86,6 @@ app.post('/api/admin/login', (req, res) => {
         const tokenSession = 'token_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         sessoesAtivas.add(tokenSession);
 
-        // Define o cookie de sessão (expira ao fechar o navegador ou em 2 horas)
         res.setHeader('Set-Cookie', `admin_session=${tokenSession}; Path=/; HttpOnly; Max-Age=7200`);
         return res.json({ ok: true, message: "Login realizado com sucesso!" });
     }
@@ -98,7 +93,7 @@ app.post('/api/admin/login', (req, res) => {
     res.status(401).json({ error: "Senha incorreta!" });
 });
 
-// Rota de Logout do Admin
+// Logout
 app.post('/api/admin/logout', (req, res) => {
     const cookies = parseCookies(req);
     if (cookies.admin_session) {
@@ -108,7 +103,7 @@ app.post('/api/admin/logout', (req, res) => {
     res.json({ ok: true, message: "Logout realizado com sucesso." });
 });
 
-// Checar status da sessão
+// Checar sessão
 app.get('/api/admin/check-session', (req, res) => {
     const cookies = parseCookies(req);
     const autenticado = cookies.admin_session && sessoesAtivas.has(cookies.admin_session);
@@ -119,18 +114,18 @@ app.get('/api/admin/check-session', (req, res) => {
 // ROTAS DE AGENDAMENTOS
 // ------------------------------------------
 
-// Obter todos os agendamentos (Protegido por senha)
+// Obter todos os agendamentos (Protegido)
 app.get('/api/agendamentos', verificarAutenticacao, (req, res) => {
     res.json(bancoAgendamentos);
 });
 
-// Obter apenas agendamentos com status 'Pendente' (Protegido)
+// Obter apenas pendentes (Protegido)
 app.get('/api/agendamentos/pendentes', verificarAutenticacao, (req, res) => {
     const pendentes = bancoAgendamentos.filter(item => item.status === 'Pendente');
     res.json(pendentes);
 });
 
-// Buscar agendamento por telefone (Público - usado pelo cliente)
+// Buscar por telefone (Público - Status do Cliente)
 app.get('/api/agendamentos/buscar', (req, res) => {
     const telefoneBusca = req.query.telefone;
     if (!telefoneBusca) return res.status(400).json({ error: "Telefone não informado." });
@@ -148,7 +143,7 @@ app.get('/api/agendamentos/buscar', (req, res) => {
     res.json(encontrados);
 });
 
-// Receber novos agendamentos enviados pelo cliente (Público)
+// Criar agendamento (Público)
 app.post('/api/agendamentos', (req, res) => {
     const { nome, telefone, endereco, data, servico, descricao } = req.body;
     
@@ -171,7 +166,7 @@ app.post('/api/agendamentos', (req, res) => {
     res.status(201).json({ message: "Agendamento realizado com sucesso!", id: novoAgendamento.id, telefone: novoAgendamento.telefone });
 });
 
-// Atualizar status da obra (Protegido)
+// Atualizar status pelo Admin (Protegido)
 app.put('/api/agendamentos/status', verificarAutenticacao, (req, res) => {
     const { id, status } = req.body;
     const agendamento = bancoAgendamentos.find(item => item.id === id);
@@ -182,7 +177,7 @@ app.put('/api/agendamentos/status', verificarAutenticacao, (req, res) => {
     res.status(404).json({ error: "Agendamento não encontrado." });
 });
 
-// Remover agendamento (Protegido)
+// Deletar pelo Admin (Protegido)
 app.delete('/api/agendamentos/:id', verificarAutenticacao, (req, res) => {
     const id = req.params.id;
     const indice = bancoAgendamentos.findIndex(item => item.id === id);
@@ -191,10 +186,18 @@ app.delete('/api/agendamentos/:id', verificarAutenticacao, (req, res) => {
     res.json({ message: "Agendamento removido com sucesso!" });
 });
 
+// Cancelar agendamento diretamente pelo Cliente (Público)
+app.delete('/api/agendamentos/cliente/:id', (req, res) => {
+    const id = req.params.id;
+    const indice = bancoAgendamentos.findIndex(item => item.id === id);
+    if (indice === -1) return res.status(404).json({ error: "Agendamento não encontrado." });
+    bancoAgendamentos.splice(indice, 1);
+    res.json({ message: "Agendamento cancelado com sucesso!" });
+});
+
 // ------------------------------------------
 // ROTAS DE FEEDBACKS
 // ------------------------------------------
-
 app.get('/api/feedbacks', (req, res) => {
     res.json(bancoFeedbacks);
 });
@@ -218,18 +221,11 @@ app.post('/api/feedbacks', (req, res) => {
 });
 
 // ------------------------------------------
-// ROTAS DE RENDERIZAÇÃO DAS PÁGINAS (HTML)
+// ROTAS DE PÁGINAS
 // ------------------------------------------
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-// Inicialização do Servidor Local
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(` Guimara Construção operacional em: http://localhost:${PORT}`);
